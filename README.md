@@ -1,0 +1,87 @@
+# DashB
+
+AI-powered dashboard generator. Describe what you want in natural language, and an LLM agent generates SQL queries and dynamic UI components in real-time.
+
+![DashB Dashboard](screenshots/postgres-dashboard-dark.png)
+
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start sample databases (PostgreSQL + MySQL)
+pnpm docker:up
+
+# Start development server
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+## Configuration
+
+Copy `.env.example` to `.env.local` and configure:
+
+```env
+# Required: AI Provider
+OPENAI_API_KEY=your-key
+AI_GATEWAY_MODEL=gpt-5  # or anthropic/claude-haiku-4.5
+
+# Optional: Database (can also configure via UI)
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/demo
+
+# Optional: LLM Observability
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+```
+
+## Features
+
+- **Multi-database**: PostgreSQL, MySQL, SQLite
+- **File uploads**: CSV, Excel, JSON, Parquet
+- **Cloud storage**: S3, GCS integration
+- **LLM observability**: Langfuse via OpenTelemetry
+
+## Sample Databases
+
+The project includes two different sample datasets for testing:
+
+| Database       | Theme             | Data                                                        |
+| -------------- | ----------------- | ----------------------------------------------------------- |
+| **PostgreSQL** | E-commerce        | Customers, orders, products, daily metrics                  |
+| **MySQL**      | SaaS/Subscription | Organizations, users, plans, MRR, usage events (500K+ rows) |
+
+```bash
+# Seed MySQL with SaaS data
+pnpm db:seed-mysql
+
+# Seed SQLite with e-commerce data
+pnpm db:seed-sqlite
+```
+
+<details>
+<summary>More screenshots</summary>
+
+**MySQL SaaS Dashboard (MRR Trends)**
+![MySQL SaaS Dashboard](screenshots/sample-01.png)
+
+**Light Mode**
+![Light Mode](screenshots/sample-02.png)
+
+</details>
+
+## Development
+
+```bash
+pnpm dev          # Start dev server
+pnpm build        # Production build
+pnpm test         # Unit tests
+pnpm test:e2e     # E2E tests
+pnpm lint         # Linting
+```
+
+## Documentation
+
+- `CLAUDE.md` - Project guidelines and patterns
+- `docs/` - Feature documentation

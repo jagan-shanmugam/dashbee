@@ -1,0 +1,7 @@
+[
+  {"id": 1, "product": "Widget A", "price": 29.99, "quantity": 100, "category": "Electronics"},
+  {"id": 2, "product": "Widget B", "price": 49.99, "quantity": 50, "category": "Electronics"},
+  {"id": 3, "product": "Gadget X", "price": 19.99, "quantity": 200, "category": "Accessories"},
+  {"id": 4, "product": "Gadget Y", "price": 39.99, "quantity": 75, "category": "Accessories"},
+  {"id": 5, "product": "Device Z", "price": 99.99, "quantity": 25, "category": "Hardware"}
+]

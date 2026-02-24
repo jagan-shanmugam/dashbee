@@ -1,8 +1,10 @@
 # DashB
 
-AI-powered dashboard generator. Describe what you want in natural language, and an LLM agent generates SQL queries and dynamic UI components in real-time.
+**AI-powered dashboard generator.** Describe what you want in natural language, and an LLM agent generates SQL queries and dynamic UI components in real-time.
 
-![DashB Dashboard](screenshots/postgres-dashboard-dark.png)
+![DashB Demo](screenshots/demo.gif)
+
+> _Type a question → AI writes SQL → Dashboard renders instantly_
 
 ## Quick Start
 
@@ -61,7 +63,11 @@ pnpm db:seed-sqlite
 ```
 
 <details>
-<summary>More screenshots</summary>
+<summary>More demos</summary>
+
+![Explore the data](screenshots/demo-hd.gif)
+
+![Explore the data](screenshots/demo-dark.gif)
 
 **MySQL SaaS Dashboard (MRR Trends)**
 ![MySQL SaaS Dashboard](screenshots/sample-01.png)

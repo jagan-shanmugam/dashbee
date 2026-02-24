@@ -1097,7 +1097,7 @@ function DBConfigModal({
 }
 
 // Auto-generation prompt for showcasing capabilities
-const AUTO_GENERATION_PROMPT = "Explore this dataset and create a dashboard with 4-5 interesting visualizations using different chart types (bar, line, pie, metrics). Show key insights and trends from the data.";
+const AUTO_GENERATION_PROMPT = "Explore this dataset and create a dashboard with 4-5 interesting visualizations using different charts. Show key insights and trends from the data.";
 
 function DashboardContent() {  
   const [prompt, setPrompt] = useState("");

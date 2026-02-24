@@ -450,7 +450,7 @@ export async function POST(req: Request) {
       system: systemPrompt,
       prompt: prompt,
       tools,
-      stopWhen: stepCountIs(15), // Allow up to 15 steps for tool calls and retries (keeps dashboards focused)
+      stopWhen: stepCountIs(20), // Allow up to 15 steps for tool calls and retries (keeps dashboards focused)
       // Note: temperature removed as it's not supported by reasoning models like GPT-5
       experimental_telemetry: {
         isEnabled: true,

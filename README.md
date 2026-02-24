@@ -1,6 +1,5 @@
 # DashBee
 
-[![GitHub stars](https://img.shields.io/github/stars/jagan-shanmugam/dashbee?style=social)](https://github.com/jagan-shanmugam/dashbee)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Last Commit](https://img.shields.io/github/last-commit/jagan-shanmugam/dashbee)](https://github.com/jagan-shanmugam/dashbee/commits/main)
 
@@ -46,7 +45,8 @@ LANGFUSE_SECRET_KEY=sk-lf-...
 
 - **Multi-database**: PostgreSQL, MySQL, SQLite
 - **File uploads**: CSV, Excel, JSON, Parquet
-- **Cloud storage**: S3, GCS integration
+- **Cloud storage**: Connect directly to S3 or GCS buckets — analyze large datasets without downloading
+- **Scale**: Handle millions of rows from cloud data lakes
 - **LLM observability**: Langfuse via OpenTelemetry
 
 ## Sample Databases

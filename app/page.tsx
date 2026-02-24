@@ -1945,7 +1945,7 @@ function DashboardContent() {
                 letterSpacing: "-0.02em",
               }}
             >
-              DashB
+              DashBee
             </h1>
             <p
               style={{ margin: "8px 0 0", color: "var(--muted)", fontSize: 16 }}

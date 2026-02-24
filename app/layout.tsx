@@ -3,7 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "DashB | json-render",
+  title: "DashBee | json-render",
   description: "AI-generated dashboards with guardrails",
 };
 

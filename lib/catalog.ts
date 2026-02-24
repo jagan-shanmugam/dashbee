@@ -2,7 +2,7 @@ import { createCatalog } from "@json-render/core";
 import { z } from "zod";
 
 /**
- * DashB component catalog
+ * DashBee component catalog
  *
  * This defines the ONLY components that the AI can generate.
  * It acts as a guardrail - the AI cannot create arbitrary HTML/CSS.
@@ -11,7 +11,7 @@ import { z } from "zod";
  * Use .nullable() instead of .optional() for optional fields.
  */
 export const sqlDashboardCatalog = createCatalog({
-  name: "DashB",
+  name: "DashBee",
   components: {
     // Layout Components
     Card: {

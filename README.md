@@ -1,8 +1,12 @@
-# DashB
+# DashBee
+
+[![GitHub stars](https://img.shields.io/github/stars/jagan-shanmugam/dashbee?style=social)](https://github.com/jagan-shanmugam/dashbee)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Last Commit](https://img.shields.io/github/last-commit/jagan-shanmugam/dashbee)](https://github.com/jagan-shanmugam/dashbee/commits/main)
 
 **AI-powered dashboard generator.** Describe what you want in natural language, and an LLM agent generates SQL queries and dynamic UI components in real-time.
 
-![DashB Demo](screenshots/demo.gif)
+![DashBee Demo](screenshots/demo.gif)
 
 > _Type a question → AI writes SQL → Dashboard renders instantly_
 
@@ -91,3 +95,14 @@ pnpm lint         # Linting
 
 - `CLAUDE.md` - Project guidelines and patterns
 - `docs/` - Feature documentation
+
+## Community
+
+- 💬 [GitHub Discussions](https://github.com/jagan-shanmugam/dashbee/discussions) — Questions & ideas
+- 🐛 [Issues](https://github.com/jagan-shanmugam/dashbee/issues) — Bug reports & feature requests
+
+⭐ **If you find DashBee useful, please consider giving it a star!** It helps others discover the project.
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.

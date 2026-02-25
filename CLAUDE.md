@@ -51,16 +51,22 @@ Using useEffect is often not necessary and can be avoided.
 - **Testing**: Vitest (unit), Playwright (e2e)
 - **Observability**: Langfuse via OpenTelemetry (`@langfuse/otel`, `@opentelemetry/sdk-node`)
 - **Package Manager**: pnpm
+- **Containerization**: Docker with multi-arch support (amd64/arm64)
 
 ## Project Structure
 
 ```
 instrumentation.ts      # OpenTelemetry + Langfuse initialization
+Dockerfile              # Multi-stage Docker build (standalone output)
+docker-compose.yml      # Full stack deployment with PostgreSQL
+docker-compose.external-db.yml  # App-only deployment (external DB)
+.dockerignore           # Docker build exclusions
 
 app/                    # Next.js App Router
   api/                  # API routes
     generate-agentic/   # Main LLM agent endpoint
     execute-queries/    # Query execution with filters
+    health/             # Health check endpoint (for Docker)
     schema/             # Database schema introspection
     test-connection/    # DB connection testing
     generate-questions/ # Generate follow-up questions
@@ -139,6 +145,7 @@ docs/                   # Project documentation
   CACHING*.md           # Caching architecture docs
   ROADMAP.md            # Feature roadmap
   SAMPLE_QUERIES.md     # Example SQL queries
+  SELF_HOSTING.md       # Docker deployment guide
 
 scripts/                # Utility scripts
   seed-sqlite.ts        # Seed SQLite demo database
@@ -185,7 +192,31 @@ pnpm db:seed-mysql       # Seed MySQL database
 
 # Utility
 pnpm clean               # Clean build artifacts
+
+# Docker (self-hosting)
+docker compose up -d              # Start full stack (app + PostgreSQL)
+docker compose -f docker-compose.external-db.yml up -d  # App only
+docker compose down               # Stop all containers
+docker compose logs -f app        # View app logs
+docker build -t dashbee:local .   # Build image locally
 ```
+
+## Docker Hub
+
+Pre-built images available at `jagansh/dashbee`:
+
+```bash
+# Pull and run (any architecture)
+docker run -d -p 3000:3000 \
+  -e OPENAI_API_KEY=sk-your-key \
+  -e DATABASE_URL=postgresql://user:pass@host:5432/db \
+  jagansh/dashbee:latest
+```
+
+| Tag | Architectures |
+|-----|---------------|
+| `latest` | linux/amd64, linux/arm64 |
+| `0.1.0` | linux/amd64, linux/arm64 |
 
 ## Key Patterns
 
@@ -471,6 +502,11 @@ LANGFUSE_BASE_URL=https://cloud.langfuse.com  # or self-hosted URL
 - `components/ui/index.ts` - Component registry (28 components)
 - `instrumentation.ts` - OpenTelemetry/Langfuse initialization
 - `docs/LANGFUSE_INTEGRATION.md` - LLM observability documentation
+- `Dockerfile` - Multi-stage Docker build configuration
+- `docker-compose.yml` - Full stack deployment with bundled PostgreSQL
+- `docker-compose.external-db.yml` - App-only deployment for external databases
+- `app/api/health/route.ts` - Health check endpoint for container orchestration
+- `docs/SELF_HOSTING.md` - Self-hosting and Docker deployment guide
 
 ## Docs
 

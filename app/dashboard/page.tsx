@@ -90,6 +90,28 @@ const DEFAULT_DB_CONFIG: DBConfig = {
   ssl: false,
 };
 
+// Logo SVG Component - Hexagon with data grid pattern (matches landing page)
+function LogoIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 28, height: 28 }}>
+      <path
+        d="M16 2L28.5 9.5V24.5L16 32L3.5 24.5V9.5L16 2Z"
+        fill="url(#logo-gradient-dashboard)"
+      />
+      <path d="M10 12H14V16H10V12Z" fill="white" fillOpacity="0.9" />
+      <path d="M18 12H22V16H18V12Z" fill="white" fillOpacity="0.7" />
+      <path d="M10 18H14V22H10V18Z" fill="white" fillOpacity="0.7" />
+      <path d="M18 18H22V22H18V18Z" fill="white" fillOpacity="0.9" />
+      <defs>
+        <linearGradient id="logo-gradient-dashboard" x1="3.5" y1="2" x2="28.5" y2="32" gradientUnits="userSpaceOnUse">
+          <stop stopColor="var(--primary, #0ea5e9)" />
+          <stop offset="1" stopColor="var(--primary-light, #06b6d4)" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
 /**
  * Parse a single JSON line from the stream
  */
@@ -1948,14 +1970,15 @@ function DashboardContent() {
                 color: "inherit",
               }}
             >
-              <span style={{ fontSize: 28 }}>🐝</span>
+              <LogoIcon />
               <h1
                 style={{
                   margin: 0,
                   fontSize: 32,
                   fontWeight: 600,
+                  fontFamily: "var(--font-serif)",
                   letterSpacing: "-0.02em",
-                  background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
+                  background: "linear-gradient(135deg, var(--primary, #0ea5e9) 0%, var(--primary-light, #06b6d4) 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",

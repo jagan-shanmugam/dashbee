@@ -1,0 +1,52 @@
+# Dependencies (will be installed fresh in container)
+node_modules
+.pnpm-store
+
+# Build outputs (will be rebuilt in container)
+.next
+out
+dist
+build
+
+# Environment files (secrets - pass via docker-compose)
+.env
+.env.local
+.env.*.local
+
+# Development tools
+*.log
+npm-debug.log*
+pnpm-debug.log*
+.git
+.github
+.vscode
+.idea
+.claude
+
+# Tests (not needed in production)
+tests
+test-results
+playwright-report
+playwright.config.ts
+coverage
+*.test.ts
+*.spec.ts
+vitest.config.ts
+
+# Documentation (not needed in production image)
+docs
+*.md
+!README.md
+
+# Sample databases (use external DB in production)
+sample-db
+
+# Scripts (development utilities)
+scripts
+
+# Miscellaneous
+.DS_Store
+temp
+screenshots
+*.tgz
+*.tar.gz

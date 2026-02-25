@@ -1,0 +1,71 @@
+name: dashbee
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      # AI Provider (at least one required)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - AI_GATEWAY_MODEL=${AI_GATEWAY_MODEL:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+
+      # Database (uses bundled postgres by default)
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/demo}
+      - DATABASE_SSL=${DATABASE_SSL:-false}
+
+      # Security settings
+      - ALLOWED_SCHEMAS=${ALLOWED_SCHEMAS:-public}
+      - MAX_QUERY_ROWS=${MAX_QUERY_ROWS:-1000}
+      - QUERY_TIMEOUT_MS=${QUERY_TIMEOUT_MS:-5000}
+
+      # Optional: LLM Observability (Langfuse)
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY:-}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-}
+      - LANGFUSE_BASE_URL=${LANGFUSE_BASE_URL:-}
+
+      # Optional: Cloud Storage (S3)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_REGION=${AWS_REGION:-}
+
+      # Optional: Cloud Storage (GCS)
+      - GCS_PROJECT_ID=${GCS_PROJECT_ID:-}
+      - GCS_KEY_FILE=${GCS_KEY_FILE:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: demo
+    volumes:
+      - ./sample-db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    # Uncomment to expose postgres externally for debugging
+    # ports:
+    #   - "5432:5432"
+
+volumes:
+  pgdata:

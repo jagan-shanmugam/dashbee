@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   DataProvider,
   VisibilityProvider,
@@ -91,6 +91,313 @@ function TwitterIcon() {
   );
 }
 
+// Analytics Icon (chart bars)
+function AnalyticsIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  );
+}
+
+// Lightning/Bolt Icon
+function BoltIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  );
+}
+
+// Users Icon
+function UsersIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+// Package/Box Icon
+function PackageIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m7.5 4.27 9 5.15" />
+      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+      <path d="m3.3 7 8.7 5 8.7-5" />
+      <path d="M12 22V12" />
+    </svg>
+  );
+}
+
+// Sparkles Icon
+function SparklesIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+      <path d="M5 3v4" />
+      <path d="M19 17v4" />
+      <path d="M3 5h4" />
+      <path d="M17 19h4" />
+    </svg>
+  );
+}
+
+// Layers Icon (for interactive)
+function LayersIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </svg>
+  );
+}
+
+// Refresh Icon
+function RefreshIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+      <path d="M8 16H3v5" />
+    </svg>
+  );
+}
+
+// Lock Icon
+function LockIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+// Star Icon
+function StarIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+// Data Teams Chart - Query Performance Line Chart
+function DataTeamsChart() {
+  const data = [
+    { month: "Jan", traditional: 45, dashbee: 8 },
+    { month: "Feb", traditional: 52, dashbee: 6 },
+    { month: "Mar", traditional: 48, dashbee: 5 },
+    { month: "Apr", traditional: 61, dashbee: 4 },
+    { month: "May", traditional: 55, dashbee: 3 },
+    { month: "Jun", traditional: 67, dashbee: 2 },
+  ];
+
+  const width = 400;
+  const height = 280;
+  const padding = { top: 40, right: 30, bottom: 50, left: 50 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+
+  const maxVal = Math.max(...data.map(d => Math.max(d.traditional, d.dashbee)));
+  const yScale = (val: number) => chartHeight - (val / maxVal) * chartHeight;
+  const xScale = (i: number) => (i / (data.length - 1)) * chartWidth;
+
+  const traditionalPath = data.map((d, i) =>
+    `${i === 0 ? 'M' : 'L'} ${xScale(i)} ${yScale(d.traditional)}`
+  ).join(' ');
+
+  const dashbeePath = data.map((d, i) =>
+    `${i === 0 ? 'M' : 'L'} ${xScale(i)} ${yScale(d.dashbee)}`
+  ).join(' ');
+
+  return (
+    <div style={{ background: 'var(--card)', borderRadius: 'var(--radius)', padding: '24px', border: '1px solid var(--border)' }}>
+      <div style={{ marginBottom: '16px' }}>
+        <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--foreground)' }}>
+          Time to Insight (minutes)
+        </h4>
+        <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--muted)' }}>
+          Traditional BI tools vs DashBee
+        </p>
+      </div>
+      <svg width={width} height={height} style={{ display: 'block' }}>
+        <defs>
+          <linearGradient id="trad-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="var(--muted)" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="var(--muted)" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="dashbee-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <g transform={`translate(${padding.left}, ${padding.top})`}>
+          {/* Grid lines */}
+          {[0, 20, 40, 60].map(tick => (
+            <g key={tick}>
+              <line x1={0} y1={yScale(tick)} x2={chartWidth} y2={yScale(tick)} stroke="var(--border)" strokeDasharray="4 4" />
+              <text x={-10} y={yScale(tick) + 4} textAnchor="end" fill="var(--muted)" fontSize="11">{tick}</text>
+            </g>
+          ))}
+          {/* Traditional area fill */}
+          <path d={`${traditionalPath} L ${chartWidth} ${chartHeight} L 0 ${chartHeight} Z`} fill="url(#trad-gradient)" />
+          {/* DashBee area fill */}
+          <path d={`${dashbeePath} L ${chartWidth} ${chartHeight} L 0 ${chartHeight} Z`} fill="url(#dashbee-gradient)" />
+          {/* Traditional line */}
+          <path d={traditionalPath} fill="none" stroke="var(--muted)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* DashBee line */}
+          <path d={dashbeePath} fill="none" stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Data points */}
+          {data.map((d, i) => (
+            <g key={i}>
+              <circle cx={xScale(i)} cy={yScale(d.traditional)} r="4" fill="var(--card)" stroke="var(--muted)" strokeWidth="2" />
+              <circle cx={xScale(i)} cy={yScale(d.dashbee)} r="4" fill="var(--card)" stroke="var(--primary)" strokeWidth="2" />
+              <text x={xScale(i)} y={chartHeight + 20} textAnchor="middle" fill="var(--muted)" fontSize="11">{d.month}</text>
+            </g>
+          ))}
+        </g>
+      </svg>
+      <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginTop: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: 12, height: 3, background: 'var(--muted)', borderRadius: 2 }} />
+          <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Traditional BI</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: 12, height: 3, background: 'var(--primary)', borderRadius: 2 }} />
+          <span style={{ fontSize: '12px', color: 'var(--muted)' }}>DashBee</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Developers Chart - Deployment Options Bar Chart
+function DevelopersChart() {
+  const data = [
+    { label: "Docker", value: 85, color: "var(--signal-teal)" },
+    { label: "npm/pnpm", value: 95, color: "var(--primary)" },
+    { label: "Vercel", value: 70, color: "var(--signal-purple)" },
+    { label: "K8s", value: 60, color: "var(--signal-coral)" },
+  ];
+
+  const maxVal = Math.max(...data.map(d => d.value));
+
+  return (
+    <div style={{ background: 'var(--card)', borderRadius: 'var(--radius)', padding: '24px', border: '1px solid var(--border)' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--foreground)' }}>
+          Self-Host Anywhere
+        </h4>
+        <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--muted)' }}>
+          Deploy on your infrastructure in minutes
+        </p>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {data.map((item, i) => (
+          <div key={i}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--foreground)' }}>{item.label}</span>
+              <span style={{ fontSize: '13px', color: 'var(--muted)' }}>{item.value}% satisfaction</span>
+            </div>
+            <div style={{ height: '10px', background: 'var(--border)', borderRadius: '5px', overflow: 'hidden' }}>
+              <div
+                style={{
+                  height: '100%',
+                  width: `${(item.value / maxVal) * 100}%`,
+                  background: item.color,
+                  borderRadius: '5px',
+                  transition: 'width 0.5s ease'
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: '20px', padding: '16px', background: 'var(--background)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+        <code style={{ fontSize: '13px', color: 'var(--primary)', fontFamily: 'monospace' }}>
+          docker run -p 3000:3000 dashbee/dashbee
+        </code>
+      </div>
+    </div>
+  );
+}
+
+// Founders Chart - KPI Dashboard
+function FoundersChart() {
+  const revenueData = [32, 45, 38, 52, 61, 58, 72, 85, 78, 92, 105, 118];
+  const months = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+
+  const maxVal = Math.max(...revenueData);
+  const width = 400;
+  const height = 120;
+  const barWidth = (width - 40) / revenueData.length - 4;
+
+  return (
+    <div style={{ background: 'var(--card)', borderRadius: 'var(--radius)', padding: '24px', border: '1px solid var(--border)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ padding: '16px', background: 'var(--pastel-teal)', borderRadius: 'var(--radius-sm)' }}>
+          <p style={{ margin: 0, fontSize: '12px', fontWeight: 500, color: '#0f766e' }}>Monthly Revenue</p>
+          <p style={{ margin: '4px 0 0', fontSize: '24px', fontWeight: 600, color: '#0f766e', fontFamily: 'var(--font-serif)' }}>$118K</p>
+          <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#0f766e' }}>↑ 12% vs last month</p>
+        </div>
+        <div style={{ padding: '16px', background: 'var(--pastel-coral)', borderRadius: 'var(--radius-sm)' }}>
+          <p style={{ margin: 0, fontSize: '12px', fontWeight: 500, color: '#c2410c' }}>Active Users</p>
+          <p style={{ margin: '4px 0 0', fontSize: '24px', fontWeight: 600, color: '#c2410c', fontFamily: 'var(--font-serif)' }}>8.4K</p>
+          <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#c2410c' }}>↑ 24% vs last month</p>
+        </div>
+        <div style={{ padding: '16px', background: 'var(--pastel-purple)', borderRadius: 'var(--radius-sm)' }}>
+          <p style={{ margin: 0, fontSize: '12px', fontWeight: 500, color: '#7c3aed' }}>Conversion</p>
+          <p style={{ margin: '4px 0 0', fontSize: '24px', fontWeight: 600, color: '#7c3aed', fontFamily: 'var(--font-serif)' }}>4.2%</p>
+          <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#7c3aed' }}>↑ 0.8% vs last month</p>
+        </div>
+      </div>
+      <div>
+        <p style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 500, color: 'var(--muted)' }}>Revenue Trend (2024)</p>
+        <svg width={width} height={height} style={{ display: 'block' }}>
+          {revenueData.map((val, i) => (
+            <g key={i}>
+              <rect
+                x={20 + i * (barWidth + 4)}
+                y={height - 24 - (val / maxVal) * (height - 40)}
+                width={barWidth}
+                height={(val / maxVal) * (height - 40)}
+                fill={i === revenueData.length - 1 ? 'var(--signal-green)' : 'var(--primary)'}
+                opacity={i === revenueData.length - 1 ? 1 : 0.6}
+                rx={3}
+              />
+              <text
+                x={20 + i * (barWidth + 4) + barWidth / 2}
+                y={height - 6}
+                textAnchor="middle"
+                fill="var(--muted)"
+                fontSize="10"
+              >
+                {months[i]}
+              </text>
+            </g>
+          ))}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// Persona charts map
+const personaCharts: Record<string, () => React.ReactNode> = {
+  "data-teams": DataTeamsChart,
+  "developers": DevelopersChart,
+  "founders": FoundersChart,
+};
+
 // Feature ticker items
 const tickerItems = [
   { label: "Natural Language Queries", color: "teal" },
@@ -135,21 +442,8 @@ const features = [
   },
 ];
 
-// Personas data
+// Personas data - ordered by primary audience
 const personas = [
-  {
-    id: "developers",
-    label: "Developers",
-    title: "Build dashboards without the boilerplate",
-    description: "Focus on your product, not on chart libraries. DashBee's declarative API lets you define dashboards as simple JSON structures.",
-    benefits: [
-      "Zero configuration charting",
-      "TypeScript-first API",
-      "Extensible component registry",
-      "Built-in dark mode support",
-    ],
-    illustration: "👨‍💻",
-  },
   {
     id: "data-teams",
     label: "Data Teams",
@@ -161,7 +455,18 @@ const personas = [
       "Automatic query optimization",
       "Real-time data refresh",
     ],
-    illustration: "📊",
+  },
+  {
+    id: "developers",
+    label: "Developers",
+    title: "Self-host on your own infrastructure",
+    description: "Deploy DashBee anywhere — Docker, Kubernetes, Vercel, or bare metal. Your data never leaves your servers. Full control, zero vendor lock-in.",
+    benefits: [
+      "One-command Docker deploy",
+      "100% open source (MIT)",
+      "No external dependencies",
+      "TypeScript-first, extensible",
+    ],
   },
   {
     id: "founders",
@@ -174,7 +479,6 @@ const personas = [
       "Export reports for investors",
       "Track KPIs automatically",
     ],
-    illustration: "🚀",
   },
 ];
 
@@ -183,9 +487,10 @@ const bentoStats = [
   { stat: "10x", label: "Faster dashboard creation", color: "teal" },
   { stat: "0", label: "Lines of chart code needed", color: "coral" },
   { stat: "3", label: "Database types supported", color: "purple" },
+  { stat: "2", label: "File formats supported for analytics", color: "" },
   { stat: "∞", label: "Questions you can ask", color: "pink", span: true },
   { stat: "100%", label: "Open source & free", color: "green" },
-  { stat: "<1s", label: "Average query response", color: "yellow" },
+  { stat: "<60s", label: "Average query response", color: "yellow" },
 ];
 
 /**
@@ -250,7 +555,48 @@ function buildUITree(
 
 export function LandingPageClient({ data }: LandingPageClientProps) {
   const [activeFeature, setActiveFeature] = useState("natural-language");
-  const [activePersona, setActivePersona] = useState("developers");
+  const [activePersona, setActivePersona] = useState("data-teams");
+
+  // Newsletter form state
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email.trim() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: "" });
+
+    try {
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "landing_hero" }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitStatus({ type: "success", message: result.message });
+        setEmail(""); // Clear input on success
+      } else {
+        setSubmitStatus({ type: "error", message: result.error });
+      }
+    } catch {
+      setSubmitStatus({
+        type: "error",
+        message: "Connection failed. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Transform landing page data into query format expected by components
   const initialData = {
@@ -464,33 +810,41 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
                 <ChevronDown />
               </button>
               <div className="nav-dropdown-menu">
-                <div className="dropdown-grid">
+                <div className="dropdown-list">
                   <a href="#features" className="dropdown-item">
-                    <span className="dropdown-icon teal">📊</span>
+                    <span className="dropdown-icon teal">
+                      <AnalyticsIcon />
+                    </span>
                     <div className="dropdown-content">
                       <span className="dropdown-title">Analytics</span>
-                      <span className="dropdown-desc">AI-powered insights</span>
+                      <span className="dropdown-desc">AI-powered insights from your data</span>
                     </div>
                   </a>
                   <a href="#demo" className="dropdown-item">
-                    <span className="dropdown-icon coral">⚡</span>
+                    <span className="dropdown-icon coral">
+                      <BoltIcon />
+                    </span>
                     <div className="dropdown-content">
                       <span className="dropdown-title">Live Demo</span>
-                      <span className="dropdown-desc">See it in action</span>
+                      <span className="dropdown-desc">See a working dashboard in action</span>
                     </div>
                   </a>
                   <a href="#personas" className="dropdown-item">
-                    <span className="dropdown-icon purple">👥</span>
+                    <span className="dropdown-icon purple">
+                      <UsersIcon />
+                    </span>
                     <div className="dropdown-content">
                       <span className="dropdown-title">Use Cases</span>
-                      <span className="dropdown-desc">Built for teams</span>
+                      <span className="dropdown-desc">Built for data teams and developers</span>
                     </div>
                   </a>
                   <a href="https://github.com/jagan-shanmugam/dashbee" className="dropdown-item" target="_blank" rel="noopener noreferrer">
-                    <span className="dropdown-icon green">📦</span>
+                    <span className="dropdown-icon green">
+                      <PackageIcon />
+                    </span>
                     <div className="dropdown-content">
                       <span className="dropdown-title">Open Source</span>
-                      <span className="dropdown-desc">MIT Licensed</span>
+                      <span className="dropdown-desc">MIT Licensed, free forever</span>
                     </div>
                   </a>
                 </div>
@@ -527,32 +881,59 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
           and get interactive dashboards in seconds.
         </p>
 
-        <div className="hero-form">
+        <form className="hero-form" onSubmit={handleNewsletterSubmit}>
           <div className="hero-input-group">
             <input
               type="email"
               className="hero-input"
               placeholder="Enter your email for updates"
               aria-label="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isSubmitting}
             />
-            <Link href="/dashboard" className="cta-button">
-              Get Started Free
-            </Link>
+            <button
+              type="submit"
+              className="cta-button"
+              disabled={isSubmitting || !email.trim()}
+              style={{ opacity: isSubmitting || !email.trim() ? 0.7 : 1 }}
+            >
+              {isSubmitting ? "Subscribing..." : "Get Updates"}
+            </button>
           </div>
-        </div>
+          {submitStatus.type && (
+            <p
+              style={{
+                margin: 0,
+                fontSize: 14,
+                fontWeight: 500,
+                color: submitStatus.type === "success" ? "var(--signal-green)" : "var(--destructive)",
+              }}
+            >
+              {submitStatus.message}
+            </p>
+          )}
+          <Link
+            href="/dashboard"
+            className="cta-button-secondary"
+            style={{ marginTop: 8 }}
+          >
+            Or try the app now →
+          </Link>
+        </form>
 
         <div className="hero-proof">
           <div className="proof-badge">
             <GitHubIcon />
-            <span>Open Source</span>
+            <span>100% Open Source</span>
           </div>
           <div className="proof-badge">
-            <span className="stars">★★★★★</span>
-            <span>MIT License</span>
+            <PackageIcon />
+            <span>Self-Host Anywhere</span>
           </div>
           <div className="proof-badge">
-            <span>🔒</span>
-            <span>Your data stays local</span>
+            <LockIcon />
+            <span>Your Data, Your Servers</span>
           </div>
         </div>
       </section>
@@ -567,13 +948,13 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
         <div className="demo-container">
           {/* Floating tooltips - positioned inside container */}
           <div className="demo-tooltip top-left" style={{ animationDelay: "0s" }}>
-            ✨ AI-generated
+            <SparklesIcon /> AI-generated
           </div>
           <div className="demo-tooltip top-right" style={{ animationDelay: "1s" }}>
-            📊 Interactive
+            <LayersIcon /> Interactive
           </div>
           <div className="demo-tooltip bottom-right" style={{ animationDelay: "2s" }}>
-            🔄 Real-time
+            <RefreshIcon /> Real-time
           </div>
 
           <div className="demo-content">
@@ -753,8 +1134,8 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
               Try DashBee Now
             </Link>
           </div>
-          <div className="persona-visual">
-            <span className="persona-illustration">{currentPersona.illustration}</span>
+          <div className="persona-chart">
+            {personaCharts[currentPersona.id]?.()}
           </div>
         </div>
       </section>
@@ -845,8 +1226,8 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
           <div className="footer-column">
             <h4 className="footer-heading">Legal</h4>
             <ul className="footer-links">
-              <li><a href="#" className="footer-link">Privacy Policy</a></li>
-              <li><a href="#" className="footer-link">Terms of Service</a></li>
+              <li><Link href="/privacy" className="footer-link">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="footer-link">Terms of Service</Link></li>
               <li><a href="https://github.com/jagan-shanmugam/dashbee/blob/main/LICENSE" className="footer-link" target="_blank" rel="noopener noreferrer">MIT License</a></li>
             </ul>
           </div>
@@ -857,8 +1238,8 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
             &copy; {new Date().getFullYear()} DashBee. Open source under MIT License.
           </p>
           <div className="footer-legal">
-            <a href="#" className="footer-link">Privacy</a>
-            <a href="#" className="footer-link">Terms</a>
+            <Link href="/privacy" className="footer-link">Privacy</Link>
+            <Link href="/terms" className="footer-link">Terms</Link>
           </div>
         </div>
       </footer>

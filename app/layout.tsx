@@ -21,7 +21,7 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "DashBee | Transform Data into Decisions",
   description:
-    "Connect databases with millions of rows, ask your business questions, and get interactive dashboards in seconds. AI-powered analytics for modern teams.",
+    "Connect databases with millions of rows, ask your business questions, and get interactive dashboards in seconds. AI-powered analytics for modern teams. Self-host on your own infrastructure.",
   keywords: [
     "dashboard",
     "analytics",
@@ -30,21 +30,42 @@ export const metadata: Metadata = {
     "data visualization",
     "database",
     "SQL",
+    "self-hosted",
+    "open source",
   ],
   authors: [{ name: "DashBee" }],
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-icon.svg", type: "image/svg+xml" },
+    ],
+  },
   openGraph: {
     title: "DashBee | Transform Data into Decisions",
     description:
-      "Connect databases with millions of rows, ask your business questions, and get interactive dashboards in seconds.",
+      "Connect databases with millions of rows, ask your business questions, and get interactive dashboards in seconds. Self-host on your own infrastructure.",
     type: "website",
     locale: "en_US",
+    siteName: "DashBee",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1280,
+        height: 640,
+        alt: "DashBee - Transform Data into Decisions",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "DashBee | Transform Data into Decisions",
     description:
-      "AI-powered analytics for modern teams. Get insights instantly from your data.",
+      "AI-powered analytics for modern teams. Self-host anywhere, your data stays on your servers.",
+    images: ["/og-image.png"],
   },
+  metadataBase: new URL("https://dashbee.dev"),
 };
 
 export default function RootLayout({

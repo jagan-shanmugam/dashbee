@@ -245,34 +245,107 @@ export async function getProductPriceVsUnits(): Promise<ProductScatter[]> {
 }
 
 /**
- * Fetch all landing page data in parallel
+ * Fallback data for when database is unreachable (e.g., during Vercel build)
+ */
+const FALLBACK_DATA: LandingPageData = {
+  kpis: { customers: 1250, orders: 3847, revenue: 284650, products: 45 },
+  revenueByRegion: [
+    { region: "West", revenue: 82500 },
+    { region: "Northeast", revenue: 71200 },
+    { region: "South", revenue: 58400 },
+    { region: "Midwest", revenue: 42300 },
+    { region: "Europe", revenue: 18500 },
+    { region: "Asia", revenue: 11750 },
+  ],
+  dailyRevenue: Array.from({ length: 30 }, (_, i) => ({
+    date: new Date(Date.now() - (29 - i) * 86400000).toISOString().split("T")[0]!,
+    revenue: 8000 + Math.random() * 4000,
+  })),
+  topProducts: [
+    { name: "Premium Widget", category: "Electronics", units_sold: 342, revenue: 34200 },
+    { name: "Deluxe Gadget", category: "Electronics", units_sold: 256, revenue: 25600 },
+    { name: "Pro Tool Set", category: "Tools", units_sold: 189, revenue: 18900 },
+    { name: "Smart Device", category: "Electronics", units_sold: 167, revenue: 16700 },
+    { name: "Basic Kit", category: "Tools", units_sold: 145, revenue: 7250 },
+  ],
+  storeLocations: [
+    { name: "San Francisco HQ", state: "California", country: "United States", lat: 37.7749, lng: -122.4194, revenue: 45000, employees: 25 },
+    { name: "New York Store", state: "New York", country: "United States", lat: 40.7128, lng: -74.006, revenue: 38000, employees: 18 },
+    { name: "Chicago Branch", state: "Illinois", country: "United States", lat: 41.8781, lng: -87.6298, revenue: 28000, employees: 12 },
+    { name: "Austin Office", state: "Texas", country: "United States", lat: 30.2672, lng: -97.7431, revenue: 22000, employees: 10 },
+  ],
+  categoryRegionSales: [
+    { category: "Electronics", region: "Asia", revenue: 4500 },
+    { category: "Electronics", region: "Europe", revenue: 8200 },
+    { category: "Electronics", region: "Midwest", revenue: 12400 },
+    { category: "Electronics", region: "Northeast", revenue: 28500 },
+    { category: "Electronics", region: "South", revenue: 18200 },
+    { category: "Electronics", region: "West", revenue: 32100 },
+    { category: "Clothing", region: "Asia", revenue: 3200 },
+    { category: "Clothing", region: "Europe", revenue: 5100 },
+    { category: "Clothing", region: "Midwest", revenue: 8900 },
+    { category: "Clothing", region: "Northeast", revenue: 15400 },
+    { category: "Clothing", region: "South", revenue: 12800 },
+    { category: "Clothing", region: "West", revenue: 18700 },
+    { category: "Tools", region: "Asia", revenue: 2100 },
+    { category: "Tools", region: "Europe", revenue: 3400 },
+    { category: "Tools", region: "Midwest", revenue: 11200 },
+    { category: "Tools", region: "Northeast", revenue: 14800 },
+    { category: "Tools", region: "South", revenue: 16500 },
+    { category: "Tools", region: "West", revenue: 19200 },
+    { category: "Home", region: "Asia", revenue: 1950 },
+    { category: "Home", region: "Europe", revenue: 1800 },
+    { category: "Home", region: "Midwest", revenue: 9800 },
+    { category: "Home", region: "Northeast", revenue: 12500 },
+    { category: "Home", region: "South", revenue: 10900 },
+    { category: "Home", region: "West", revenue: 12500 },
+  ],
+  productScatter: [
+    { name: "Budget Item", price: 9.99, units_sold: 520 },
+    { name: "Standard Product", price: 29.99, units_sold: 340 },
+    { name: "Quality Goods", price: 59.99, units_sold: 180 },
+    { name: "Premium Option", price: 99.99, units_sold: 95 },
+    { name: "Luxury Edition", price: 199.99, units_sold: 42 },
+    { name: "Economy Pack", price: 14.99, units_sold: 410 },
+    { name: "Value Bundle", price: 39.99, units_sold: 245 },
+    { name: "Pro Version", price: 149.99, units_sold: 68 },
+  ],
+};
+
+/**
+ * Fetch all landing page data in parallel (with fallback for build failures)
  */
 export async function getLandingPageData(): Promise<LandingPageData> {
-  const [
-    kpis,
-    revenueByRegion,
-    dailyRevenue,
-    topProducts,
-    storeLocations,
-    categoryRegionSales,
-    productScatter,
-  ] = await Promise.all([
-    getKPIs(),
-    getRevenueByRegion(),
-    getDailyRevenueTrend(),
-    getTopProducts(),
-    getStoreLocations(),
-    getCategoryRegionSales(),
-    getProductPriceVsUnits(),
-  ]);
+  try {
+    const [
+      kpis,
+      revenueByRegion,
+      dailyRevenue,
+      topProducts,
+      storeLocations,
+      categoryRegionSales,
+      productScatter,
+    ] = await Promise.all([
+      getKPIs(),
+      getRevenueByRegion(),
+      getDailyRevenueTrend(),
+      getTopProducts(),
+      getStoreLocations(),
+      getCategoryRegionSales(),
+      getProductPriceVsUnits(),
+    ]);
 
-  return {
-    kpis,
-    revenueByRegion,
-    dailyRevenue,
-    topProducts,
-    storeLocations,
-    categoryRegionSales,
-    productScatter,
-  };
+    return {
+      kpis,
+      revenueByRegion,
+      dailyRevenue,
+      topProducts,
+      storeLocations,
+      categoryRegionSales,
+      productScatter,
+    };
+  } catch (error) {
+    console.warn("Failed to fetch landing page data from database, using fallback:", error);
+    return FALLBACK_DATA;
+  }
 }

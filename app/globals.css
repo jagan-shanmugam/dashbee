@@ -290,6 +290,19 @@ textarea:focus {
   margin: 0;
 }
 
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.github-link:hover {
+  color: var(--foreground);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .landing-header {

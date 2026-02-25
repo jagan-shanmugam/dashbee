@@ -312,8 +312,8 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
           Get Insights Instantly from Your Data
         </h1>
         <p className="hero-subtitle">
-          Connect databases with millions of rows, ask questions in plain English,
-          and get interactive dashboards in seconds — no SQL required.
+          Connect databases with millions of rows, ask your business questions,
+          and get interactive dashboards in seconds.
         </p>
         <div className="cta-group">
           <Link href="/dashboard" className="cta-button">

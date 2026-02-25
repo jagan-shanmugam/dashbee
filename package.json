@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.13",
+    "@ai-sdk/google": "^3.0.31",
     "@ai-sdk/openai": "^3.0.7",
     "@aws-sdk/client-s3": "^3.990.0",
     "@google-cloud/storage": "^7.19.0",

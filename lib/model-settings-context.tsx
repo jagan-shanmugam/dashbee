@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
-export type ModelProvider = "openai" | "ollama" | "anthropic" | "azure" | "openrouter";
+export type ModelProvider = "openai" | "ollama" | "anthropic" | "azure" | "openrouter" | "gemini";
 
 export interface ModelSettings {
   /** Model provider type */
@@ -130,6 +130,17 @@ export const OPENROUTER_MODELS = [
 ];
 
 /**
+ * Predefined Gemini models for quick selection
+ * Uses Google's official model IDs
+ */
+export const GEMINI_MODELS = [
+  { id: "gemini-3-flash-preview", name: "Gemini 3 Flash", description: "Frontier-class at lower cost (Recommended)" },
+  { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash", description: "Best price-performance" },
+  { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro", description: "Most advanced reasoning" },
+  { id: "gemini-3-pro-preview", name: "Gemini 3 Pro", description: "State-of-the-art reasoning" },
+];
+
+/**
  * Default base URLs for providers
  */
 export const PROVIDER_BASE_URLS: Record<ModelProvider, string> = {
@@ -138,4 +149,5 @@ export const PROVIDER_BASE_URLS: Record<ModelProvider, string> = {
   anthropic: "https://api.anthropic.com",
   azure: "", // Configured via environment
   openrouter: "https://openrouter.ai/api/v1",
+  gemini: "https://generativelanguage.googleapis.com/v1beta",
 };

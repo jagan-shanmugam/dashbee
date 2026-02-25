@@ -6,6 +6,7 @@ import {
   useModelSettings,
   OLLAMA_MODELS,
   OPENROUTER_MODELS,
+  GEMINI_MODELS,
   PROVIDER_BASE_URLS,
   type ModelProvider,
 } from "@/lib/model-settings-context";
@@ -183,14 +184,14 @@ export function ModelSettings() {
               Provider
             </label>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {(["ollama", "openrouter", "openai"] as ModelProvider[]).map((provider) => (
+              {(["ollama", "openrouter", "gemini", "openai"] as ModelProvider[]).map((provider) => (
                 <button
                   key={provider}
                   onClick={() => handleProviderChange(provider)}
                   disabled={!settings.useCustomSettings}
                   style={{
                     flex: "1 1 auto",
-                    minWidth: 80,
+                    minWidth: 70,
                     padding: "8px 12px",
                     background:
                       settings.provider === provider ? "var(--accent)" : "transparent",
@@ -203,7 +204,7 @@ export function ModelSettings() {
                     textTransform: provider === "openrouter" ? "none" : "capitalize",
                   }}
                 >
-                  {provider === "openrouter" ? "OpenRouter" : provider}
+                  {provider === "openrouter" ? "OpenRouter" : provider === "gemini" ? "Gemini" : provider}
                 </button>
               ))}
             </div>
@@ -407,7 +408,7 @@ export function ModelSettings() {
                 type="password"
                 value={settings.apiKey || ""}
                 onChange={(e) => setSettings({ apiKey: e.target.value })}
-                placeholder="sk-or-..."
+                placeholder="Optional: Uses server key if not provided"
                 disabled={!settings.useCustomSettings}
                 style={{
                   width: "100%",
@@ -461,6 +462,123 @@ export function ModelSettings() {
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 4, maxHeight: 200, overflowY: "auto" }}>
                 {OPENROUTER_MODELS.map((model) => (
+                  <button
+                    key={model.id}
+                    onClick={() => handleModelSelect(model.id)}
+                    disabled={!settings.useCustomSettings}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "8px 12px",
+                      background:
+                        settings.model === model.id
+                          ? "var(--accent)"
+                          : "transparent",
+                      border: "none",
+                      borderRadius: "var(--radius)",
+                      fontSize: 13,
+                      color: "var(--foreground)",
+                      cursor: settings.useCustomSettings
+                        ? "pointer"
+                        : "not-allowed",
+                      textAlign: "left",
+                      opacity: settings.useCustomSettings ? 1 : 0.5,
+                    }}
+                  >
+                    <div>
+                      <span style={{ fontWeight: 500 }}>{model.name}</span>
+                      <span
+                        style={{
+                          marginLeft: 8,
+                          fontSize: 11,
+                          color: "var(--muted)",
+                        }}
+                      >
+                        {model.description}
+                      </span>
+                    </div>
+                    {settings.model === model.id && (
+                      <Check size={14} style={{ color: "var(--success)" }} />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Gemini configuration */}
+          {settings.provider === "gemini" && (
+            <div style={{ padding: "12px 16px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "var(--muted)",
+                  marginBottom: 8,
+                }}
+              >
+                API Key
+              </label>
+              <input
+                type="password"
+                value={settings.apiKey || ""}
+                onChange={(e) => setSettings({ apiKey: e.target.value })}
+                placeholder="Optional: Uses server key if not provided"
+                disabled={!settings.useCustomSettings}
+                style={{
+                  width: "100%",
+                  padding: "8px 12px",
+                  background: "var(--background)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius)",
+                  fontSize: 13,
+                  color: "var(--foreground)",
+                  marginBottom: 12,
+                  opacity: settings.useCustomSettings ? 1 : 0.5,
+                }}
+              />
+              <label
+                style={{
+                  display: "block",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "var(--muted)",
+                  marginBottom: 8,
+                }}
+              >
+                Model
+              </label>
+              <input
+                type="text"
+                value={settings.model}
+                onChange={(e) => setSettings({ model: e.target.value })}
+                placeholder="gemini-3-flash-preview"
+                disabled={!settings.useCustomSettings}
+                style={{
+                  width: "100%",
+                  padding: "8px 12px",
+                  background: "var(--background)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius)",
+                  fontSize: 13,
+                  color: "var(--foreground)",
+                  marginBottom: 8,
+                  opacity: settings.useCustomSettings ? 1 : 0.5,
+                }}
+              />
+              <p
+                style={{
+                  margin: "8px 0 8px 0",
+                  fontSize: 11,
+                  color: "var(--muted)",
+                }}
+              >
+                Quick select:
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, maxHeight: 200, overflowY: "auto" }}>
+                {GEMINI_MODELS.map((model) => (
                   <button
                     key={model.id}
                     onClick={() => handleModelSelect(model.id)}

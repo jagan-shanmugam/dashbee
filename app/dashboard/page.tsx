@@ -224,7 +224,7 @@ interface FileDataSource {
  * Custom hook for dashboard streaming with agentic SQL execution
  */
 interface ModelSettingsForApi {
-  provider?: "openai" | "ollama" | "anthropic" | "azure" | "openrouter";
+  provider?: "openai" | "ollama" | "anthropic" | "azure" | "openrouter" | "gemini";
   model?: string;
   baseUrl?: string;
   apiKey?: string;

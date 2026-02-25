@@ -1,5 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
 const CUSTOM_OPENAI_MODELS = [
   "gpt-4o",
@@ -9,7 +10,7 @@ const CUSTOM_OPENAI_MODELS = [
   "gpt-5.1",
 ];
 
-export type ModelProvider = "openai" | "ollama" | "anthropic" | "azure" | "openrouter";
+export type ModelProvider = "openai" | "ollama" | "anthropic" | "azure" | "openrouter" | "gemini";
 
 export interface CustomModelSettings {
   provider: ModelProvider;
@@ -93,6 +94,14 @@ function createOpenRouterProvider(apiKey: string) {
 }
 
 /**
+ * Create a Gemini provider using Google's AI SDK
+ * Requires API key for authentication
+ */
+function createGeminiProvider(apiKey: string) {
+  return createGoogleGenerativeAI({ apiKey });
+}
+
+/**
  * Create provider from custom model settings
  * Used when user configures a custom model in the UI
  */
@@ -105,11 +114,21 @@ export function getCustomModelProvider(
   }
 
   if (settings.provider === "openrouter") {
-    if (!settings.apiKey) {
-      throw new Error("OpenRouter requires an API key");
+    const apiKey = settings.apiKey || process.env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      throw new Error("OpenRouter requires an API key. Provide one in settings or set OPENROUTER_API_KEY.");
     }
-    const provider = createOpenRouterProvider(settings.apiKey);
+    const provider = createOpenRouterProvider(apiKey);
     // OpenRouter SDK uses provider(model) directly, not provider.chat(model)
+    return provider(settings.model);
+  }
+
+  if (settings.provider === "gemini") {
+    const apiKey = settings.apiKey || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Gemini requires an API key. Provide one in settings or set GEMINI_API_KEY.");
+    }
+    const provider = createGeminiProvider(apiKey);
     return provider(settings.model);
   }
 

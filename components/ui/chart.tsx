@@ -344,11 +344,12 @@ function VerticalBarItem({
       {/* Tooltip on hover */}
       {isHovered && (() => {
         // Calculate tooltip position, ensuring it stays within bounds
-        const tooltipWidth = 100;
-        const tooltipHeight = 32;
-        const tooltipX = x + width / 2 - tooltipWidth / 2;
-        // Position above bar if space, below if not
-        const tooltipY = y >= tooltipHeight + 12 ? y - tooltipHeight - 8 : y + barHeight + 8;
+        const tooltipWidth = 120;
+        const tooltipHeight = 44;
+        const tooltipX = Math.max(0, x + width / 2 - tooltipWidth / 2);
+        // Always position below bar to avoid clipping at top of SVG
+        // Since bars are in a translated group, positioning above can cause clipping
+        const tooltipY = y + barHeight + 8;
 
         return (
           <g style={{ pointerEvents: "none" }}>
@@ -357,26 +358,26 @@ function VerticalBarItem({
               y={tooltipY}
               width={tooltipWidth}
               height={tooltipHeight}
-              rx={4}
-              fill="var(--card)"
-              stroke="var(--border)"
+              rx={6}
+              fill="var(--foreground)"
+              opacity={0.95}
             />
             <text
-              x={x + width / 2}
-              y={tooltipY + 12}
+              x={tooltipX + tooltipWidth / 2}
+              y={tooltipY + 16}
               textAnchor="middle"
-              fontSize={10}
-              fill="var(--muted)"
+              fontSize={11}
+              fill="var(--background)"
             >
               {formatLabelUtil(label, { compact: true })}
             </text>
             <text
-              x={x + width / 2}
-              y={tooltipY + 26}
+              x={tooltipX + tooltipWidth / 2}
+              y={tooltipY + 32}
               textAnchor="middle"
-              fontSize={12}
+              fontSize={13}
               fontWeight={600}
-              fill="var(--foreground)"
+              fill="var(--background)"
             >
               {isCurrency ? formatTooltipValue(value, { currency: true }) : formatTooltipValue(value)}
             </text>

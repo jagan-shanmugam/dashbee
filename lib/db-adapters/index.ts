@@ -17,6 +17,11 @@ import type { DBConfig, DatabaseAdapter, DatabaseType } from "./types";
 import { PostgresAdapter, createPostgresAdapter } from "./postgres";
 import { MySQLAdapter, createMySQLAdapter } from "./mysql";
 import { SQLiteAdapter, createSQLiteAdapter } from "./sqlite";
+import {
+  SupabaseAdapter,
+  createSupabaseAdapter,
+  getSupabaseAdapter,
+} from "./supabase";
 
 // Cache for adapter instances
 const adapterCache = new Map<string, DatabaseAdapter>();
@@ -140,3 +145,4 @@ export async function isDatabaseTypeAvailable(
 
 // Re-export adapter classes for direct use if needed
 export { PostgresAdapter, MySQLAdapter, SQLiteAdapter };
+export { SupabaseAdapter, createSupabaseAdapter, getSupabaseAdapter };

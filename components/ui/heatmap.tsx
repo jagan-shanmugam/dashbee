@@ -596,16 +596,17 @@ function MatrixHeatmap({
     };
   }, [data, rowColumn, colColumn, valueColumn]);
 
-  // Smaller cells in normal view to prevent oversized heatmaps
-  const cellSize = forFullscreen ? 40 : 24;
-  const cellGap = 2;
-  const labelWidth = forFullscreen ? 150 : 70;
-  const labelHeight = forFullscreen ? 30 : 24;
+  // Cell and label sizes - responsive to content
+  const cellSize = forFullscreen ? 48 : 44;
+  const cellGap = 3;
+  const labelWidth = forFullscreen ? 150 : 110;
+  // Rotated labels need significant vertical space (text extends upward when rotated -45°)
+  const labelHeight = forFullscreen ? 80 : 75;
   const width = cols.length * (cellSize + cellGap) + labelWidth;
   const height = rows.length * (cellSize + cellGap) + labelHeight;
-  // Limit max dimensions in normal view to prevent oversized heatmaps
-  const maxNormalWidth = 400;
-  const maxNormalHeight = 300;
+  // No max constraints - let SVG scale to fit container
+  const maxNormalWidth = 800;
+  const maxNormalHeight = 550;
 
   const getColor = (value: number) => {
     if (value === 0) return "var(--border)";
@@ -628,19 +629,25 @@ function MatrixHeatmap({
           display: "block",
         }}
       >
-        {/* Column labels - truncated in normal view to prevent overlap */}
-        {cols.map((col, i) => (
-          <text
-            key={col}
-            x={labelWidth + i * (cellSize + cellGap) + cellSize / 2}
-            y={forFullscreen ? 20 : 16}
-            fontSize={forFullscreen ? 12 : 9}
-            fill="var(--muted)"
-            textAnchor="middle"
-          >
-            {forFullscreen ? col : col.length > 5 ? `${col.slice(0, 5)}…` : col}
-          </text>
-        ))}
+        {/* Column labels - rotated for better fit */}
+        {cols.map((col, i) => {
+          const x = labelWidth + i * (cellSize + cellGap) + cellSize / 2;
+          const y = labelHeight - 6;
+          return (
+            <text
+              key={col}
+              x={x}
+              y={y}
+              fontSize={forFullscreen ? 12 : 12}
+              fill="var(--muted)"
+              textAnchor="start"
+              dominantBaseline="middle"
+              transform={`rotate(-45, ${x}, ${y})`}
+            >
+              {col}
+            </text>
+          );
+        })}
 
         {/* Rows */}
         <g transform={`translate(0, ${labelHeight})`}>
@@ -648,16 +655,16 @@ function MatrixHeatmap({
             <g key={row}>
               {/* Row label */}
               <text
-                x={labelWidth - 5}
+                x={labelWidth - 8}
                 y={rowIndex * (cellSize + cellGap) + cellSize / 2 + 4}
-                fontSize={forFullscreen ? 12 : 10}
+                fontSize={forFullscreen ? 12 : 11}
                 fill="var(--muted)"
                 textAnchor="end"
               >
                 {forFullscreen
                   ? row
-                  : row.length > 10
-                    ? `${row.slice(0, 10)}…`
+                  : row.length > 12
+                    ? `${row.slice(0, 11)}…`
                     : row}
               </text>
 

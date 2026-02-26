@@ -1146,6 +1146,34 @@ function DBConfigModal({
 // Auto-generation prompt for showcasing capabilities
 const AUTO_GENERATION_PROMPT = "Explore this dataset and create a dashboard with 4-5 interesting visualizations using different charts. Show key insights and trends from the data.";
 
+// Pre-defined questions for demo database (skip LLM generation for instant experience)
+const DEMO_SUGGESTED_QUESTIONS = [
+  "Show revenue trend over the last 90 days with key insights",
+  "Top product categories by revenue with regional breakdown",
+  "Customer distribution by region as a map",
+  "Order status breakdown with fulfillment metrics",
+  "Daily traffic patterns by hour and day of week",
+];
+
+// Rich executive dashboard prompt for demo database - provides instant value
+const DEMO_EXECUTIVE_PROMPT = `Create an executive dashboard with these visualizations:
+
+1. **Key Metrics Row** - 4 metric cards showing:
+   - Total Revenue (from daily_metrics)
+   - Active Customers (from kpi_snapshots)
+   - Average Order Value (calculated from orders)
+   - Order Fulfillment Rate (orders with status='completed')
+
+2. **Revenue Trend** - Line/area chart showing daily revenue over the last 90 days from daily_metrics
+
+3. **Geographic Performance** - US state choropleth map showing total orders by state from the orders table
+
+4. **Category Performance** - Bar chart showing revenue by product category from category_region_sales
+
+5. **Traffic Heatmap** - Matrix heatmap showing order volume by hour of day vs day of week from hourly_traffic
+
+Use different chart types for variety. Include brief insights explaining each visualization.`;
+
 function DashboardContent() {  
   const [prompt, setPrompt] = useState("");
   const [encodingConfig, setEncodingConfig] = useState<EncodingConfig | null>(null);
@@ -1492,54 +1520,79 @@ function DashboardContent() {
     }
     setShowDBConfig(false);
 
-    // Test connection automatically when saving config
-    setConnectionStatus("unknown");
-    try {
-      const testResponse = await fetch("/api/test-connection", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dbConfig: config }),
-      });
-      if (testResponse.ok) {
-        setConnectionStatus("verified");
-      } else {
-        setConnectionStatus("failed");
-        console.warn("Database connection test failed on config save");
-      }
-    } catch (err) {
-      setConnectionStatus("failed");
-      console.error("Failed to test database connection:", err);
-    }
+    const isDemo = config.type === "demo";
 
-    // Generate questions for the new database
-    setLoadingQuestions(true);
-    let questionsGenerated = false;
-    try {
-      const response = await fetch("/api/generate-questions", {
+    if (isDemo) {
+      // FAST PATH: Demo database - skip blocking steps for instant experience
+      // 1. Set pre-defined questions immediately (no LLM call)
+      setSuggestedQuestions(DEMO_SUGGESTED_QUESTIONS);
+      localStorage.setItem(
+        "dashb-questions",
+        JSON.stringify(DEMO_SUGGESTED_QUESTIONS),
+      );
+
+      // 2. Start dashboard generation IMMEDIATELY with rich executive prompt
+      triggerAutoGeneration(DEMO_EXECUTIVE_PROMPT);
+
+      // 3. Run connection test in background (non-blocking)
+      setConnectionStatus("unknown");
+      fetch("/api/test-connection", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ dbConfig: config }),
-      });
-      if (response.ok) {
-        const { questions } = await response.json();
-        if (questions && questions.length > 0) {
-          setSuggestedQuestions(questions);
-          localStorage.setItem(
-            "dashb-questions",
-            JSON.stringify(questions),
-          );
-          questionsGenerated = true;
+      })
+        .then((res) => setConnectionStatus(res.ok ? "verified" : "failed"))
+        .catch(() => setConnectionStatus("failed"));
+    } else {
+      // STANDARD PATH: Custom database - keep sequential validation
+      setConnectionStatus("unknown");
+      try {
+        const testResponse = await fetch("/api/test-connection", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dbConfig: config }),
+        });
+        if (testResponse.ok) {
+          setConnectionStatus("verified");
+        } else {
+          setConnectionStatus("failed");
+          console.warn("Database connection test failed on config save");
         }
+      } catch (err) {
+        setConnectionStatus("failed");
+        console.error("Failed to test database connection:", err);
       }
-    } catch (err) {
-      console.error("Failed to generate questions:", err);
-    } finally {
-      setLoadingQuestions(false);
-    }
 
-    // Auto-generate initial dashboard to showcase capabilities
-    if (questionsGenerated) {
-      triggerAutoGeneration(AUTO_GENERATION_PROMPT);
+      // Generate questions for custom database
+      setLoadingQuestions(true);
+      let questionsGenerated = false;
+      try {
+        const response = await fetch("/api/generate-questions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dbConfig: config }),
+        });
+        if (response.ok) {
+          const { questions } = await response.json();
+          if (questions && questions.length > 0) {
+            setSuggestedQuestions(questions);
+            localStorage.setItem(
+              "dashb-questions",
+              JSON.stringify(questions),
+            );
+            questionsGenerated = true;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to generate questions:", err);
+      } finally {
+        setLoadingQuestions(false);
+      }
+
+      // Auto-generate initial dashboard for custom databases
+      if (questionsGenerated) {
+        triggerAutoGeneration(AUTO_GENERATION_PROMPT);
+      }
     }
   };
 

@@ -156,10 +156,10 @@ export function GenerationSettings() {
                 alignItems: "center",
                 padding: "12px 20px",
                 borderBottom: "1px solid var(--border)",
-                background: "var(--accent)",
+                background: "var(--primary)",
               }}
             >
-              <span style={{ fontSize: 13, color: "var(--muted)" }}>
+              <span style={{ fontSize: 13, color: "white" }}>
                 {enabledCount} of {totalCount} chart types enabled
               </span>
               <div style={{ display: "flex", gap: 8 }}>
@@ -274,7 +274,7 @@ function ChartTypeRow({
         alignItems: "center",
         gap: 12,
         padding: "12px 16px",
-        background: isEnabled ? "var(--accent)" : "transparent",
+        background: isEnabled ? "var(--primary)" : "transparent",
         border: "none",
         borderRadius: "var(--radius)",
         cursor: "pointer",

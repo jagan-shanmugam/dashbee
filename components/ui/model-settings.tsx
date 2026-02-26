@@ -194,7 +194,7 @@ export function ModelSettings() {
                     minWidth: 70,
                     padding: "8px 12px",
                     background:
-                      settings.provider === provider ? "var(--accent)" : "transparent",
+                      settings.provider === provider ? "var(--primary)" : "transparent",
                     border: "1px solid var(--border)",
                     borderRadius: "var(--radius)",
                     fontSize: 13,
@@ -355,7 +355,7 @@ export function ModelSettings() {
                         padding: "8px 12px",
                         background:
                           settings.model === model.id
-                            ? "var(--accent)"
+                            ? "var(--primary)"
                             : "transparent",
                         border: "none",
                         borderRadius: "var(--radius)",

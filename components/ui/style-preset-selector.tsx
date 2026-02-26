@@ -113,7 +113,7 @@ export function StylePresetSelector() {
                     gap: 12,
                     width: "100%",
                     padding: "10px 12px",
-                    background: isSelected ? "var(--accent)" : "transparent",
+                    background: isSelected ? "var(--primary)" : "transparent",
                     border: "none",
                     borderRadius: 6,
                     textAlign: "left",

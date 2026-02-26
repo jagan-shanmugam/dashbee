@@ -2182,7 +2182,7 @@ function DashboardContent() {
                     alignItems: "center",
                     gap: 6,
                     padding: "4px 8px",
-                    background: "var(--accent)",
+                    background: "var(--border)",
                     borderRadius: 4,
                   }}>
                     {connectionStatus === "verified" && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--success)" }} />}

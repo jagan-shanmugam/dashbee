@@ -330,7 +330,7 @@ export function MultiFileUpload({
                         {file.fileName}
                       </div>
                       <div style={{ fontSize: 11, color: "var(--muted)" }}>
-                        Table: <code style={{ background: "var(--accent)", padding: "0 4px", borderRadius: 2 }}>{file.tableName}</code> • {file.rowCount.toLocaleString()} rows • {file.columns.length} columns
+                        Table: <code style={{ background: "var(--border)", padding: "0 4px", borderRadius: 2 }}>{file.tableName}</code> • {file.rowCount.toLocaleString()} rows • {file.columns.length} columns
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -367,13 +367,14 @@ export function MultiFileUpload({
         onDragLeave={handleDragLeave}
         style={{
           padding: uploadedFiles.length > 0 ? 16 : 32,
-          background: isDragging ? "var(--accent)" : "var(--card)",
+          background: isDragging ? "var(--primary)" : "var(--card)",
           border: `2px dashed ${isDragging ? "var(--foreground)" : error ? "var(--destructive)" : "var(--border)"}`,
           borderRadius: "var(--radius)",
           textAlign: "center",
           cursor: disabled || isProcessing ? "not-allowed" : "pointer",
           opacity: disabled ? 0.5 : 1,
           transition: "all 0.15s ease",
+          color: isDragging ? "white" : undefined,
         }}
       >
         {isProcessing ? (
@@ -565,7 +566,7 @@ export function FileUpload({
                 key={col}
                 style={{
                   padding: "2px 8px",
-                  background: "var(--accent)",
+                  background: "var(--border)",
                   borderRadius: 4,
                   fontSize: 11,
                 }}
@@ -624,13 +625,14 @@ export function FileUpload({
         onDragLeave={handleDragLeave}
         style={{
           padding: 32,
-          background: isDragging ? "var(--accent)" : "var(--card)",
+          background: isDragging ? "var(--primary)" : "var(--card)",
           border: `2px dashed ${isDragging ? "var(--foreground)" : error ? "var(--destructive)" : "var(--border)"}`,
           borderRadius: "var(--radius)",
           textAlign: "center",
           cursor: disabled || isProcessing ? "not-allowed" : "pointer",
           opacity: disabled ? 0.5 : 1,
           transition: "all 0.15s ease",
+          color: isDragging ? "white" : undefined,
         }}
       >
         {isProcessing ? (

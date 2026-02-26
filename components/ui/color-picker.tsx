@@ -117,7 +117,7 @@ export function ColorPicker({
                   style={{
                     width: "100%",
                     padding: "8px",
-                    background: isSelected ? "var(--accent)" : "transparent",
+                    background: isSelected ? "var(--primary)" : "transparent",
                     border: "none",
                     borderRadius: 4,
                     cursor: "pointer",

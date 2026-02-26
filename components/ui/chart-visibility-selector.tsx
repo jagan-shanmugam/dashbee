@@ -151,7 +151,7 @@ export function ChartVisibilitySelector() {
               style={{
                 flex: 1,
                 padding: "6px 12px",
-                background: allVisible ? "var(--accent)" : "transparent",
+                background: allVisible ? "var(--primary)" : "transparent",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius)",
                 fontSize: 12,
@@ -168,7 +168,7 @@ export function ChartVisibilitySelector() {
               style={{
                 flex: 1,
                 padding: "6px 12px",
-                background: noneVisible ? "var(--accent)" : "transparent",
+                background: noneVisible ? "var(--primary)" : "transparent",
                 border: "1px solid var(--border)",
                 borderRadius: "var(--radius)",
                 fontSize: 12,

@@ -108,7 +108,7 @@ function BarItem({
         marginLeft: -8,
         marginRight: -8,
         borderRadius: 6,
-        background: isHovered ? "var(--accent)" : "transparent",
+        background: isHovered ? "var(--primary)" : "transparent",
         transition: "background 0.15s ease",
       }}
       onClick={onClick}

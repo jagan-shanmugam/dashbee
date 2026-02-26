@@ -1524,17 +1524,20 @@ function DashboardContent() {
 
     if (isDemo) {
       // FAST PATH: Demo database - skip blocking steps for instant experience
-      // 1. Set pre-defined questions immediately (no LLM call)
+      // 1. Set source type to database (dismisses "Choose Data Source" modal)
+      setSourceType("database");
+
+      // 2. Set pre-defined questions immediately (no LLM call)
       setSuggestedQuestions(DEMO_SUGGESTED_QUESTIONS);
       localStorage.setItem(
         "dashb-questions",
         JSON.stringify(DEMO_SUGGESTED_QUESTIONS),
       );
 
-      // 2. Start dashboard generation IMMEDIATELY with rich executive prompt
+      // 3. Start dashboard generation IMMEDIATELY with rich executive prompt
       triggerAutoGeneration(DEMO_EXECUTIVE_PROMPT);
 
-      // 3. Run connection test in background (non-blocking)
+      // 4. Run connection test in background (non-blocking)
       setConnectionStatus("unknown");
       fetch("/api/test-connection", {
         method: "POST",

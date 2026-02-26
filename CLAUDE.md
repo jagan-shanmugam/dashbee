@@ -4,6 +4,10 @@
 
 **DashBee** - AI-powered dashboard generator that creates dashboards from natural language prompts. Users describe what they want, and an LLM agent generates SQL queries and dynamic UI components rendered in real-time.
 
+**Production Deployment**: https://dashb-brown.vercel.app/
+- After every deployment, verify the live site using Playwright browser tools
+- Test the demo database flow at `/dashboard` to ensure instant dashboard generation works
+
 The application has two main interfaces:
 - **Landing Page** (`/`) - Static marketing page with demo dashboards, powered by Supabase via ISR
 - **Dashboard App** (`/dashboard`) - Interactive AI dashboard generator for user databases

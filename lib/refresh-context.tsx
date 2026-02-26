@@ -45,8 +45,6 @@ const DEFAULT_CONFIG: RefreshConfig = {
 
 // Predefined interval options in seconds
 export const REFRESH_INTERVALS = [
-  // { label: "5 seconds", value: 5 },
-  // { label: "15 seconds", value: 15 },
   { label: "30 seconds", value: 30 },
   { label: "1 minute", value: 60 },
   { label: "5 minutes", value: 300 },

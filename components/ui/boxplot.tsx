@@ -15,49 +15,7 @@ import {
 } from "@/lib/export-utils";
 import { getPaletteColors } from "@/lib/color-palette";
 import { useStylePresetSafe } from "@/lib/style-preset-context";
-
-/**
- * Calculate nice round tick values
- */
-function calculateNiceTicks(
-  min: number,
-  max: number,
-  targetCount: number,
-): number[] {
-  if (max === min) return [min, min + 1];
-
-  const range = max - min;
-  const roughStep = range / (targetCount - 1);
-
-  const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
-  const residual = roughStep / magnitude;
-
-  let niceStep: number;
-  if (residual <= 1.5) niceStep = magnitude;
-  else if (residual <= 3) niceStep = 2 * magnitude;
-  else if (residual <= 7) niceStep = 5 * magnitude;
-  else niceStep = 10 * magnitude;
-
-  const niceMin = Math.floor(min / niceStep) * niceStep;
-  const niceMax = Math.ceil(max / niceStep) * niceStep;
-
-  const ticks: number[] = [];
-  for (let tick = niceMin; tick <= niceMax; tick += niceStep) {
-    ticks.push(tick);
-  }
-
-  return ticks.length >= 2 ? ticks : [min, max];
-}
-
-/**
- * Format a number for display
- */
-function formatValue(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 2,
-    notation: Math.abs(value) >= 10000 ? "compact" : "standard",
-  }).format(value);
-}
+import { calculateNiceTicks, formatChartValue } from "@/lib/chart-utils";
 
 /**
  * Calculate quartiles and IQR for boxplot
@@ -354,7 +312,7 @@ export function Boxplot({ element, loading }: ComponentRenderProps) {
                   fill="var(--muted)"
                   fontSize={10}
                 >
-                  {formatValue(tick)}
+                  {formatChartValue(tick)}
                 </text>
               </g>
             );
@@ -510,19 +468,19 @@ export function Boxplot({ element, loading }: ComponentRenderProps) {
                   stroke="var(--border)"
                 />
                 <text x={tooltipX + 8} y={tooltipY + 16} fontSize={10} fill="var(--muted)">
-                  Q3: {formatValue(stats.q3)}
+                  Q3: {formatChartValue(stats.q3)}
                 </text>
                 <text x={tooltipX + 8} y={tooltipY + 32} fontSize={10} fill="var(--muted)">
-                  Median: {formatValue(stats.median)}
+                  Median: {formatChartValue(stats.median)}
                 </text>
                 <text x={tooltipX + 8} y={tooltipY + 48} fontSize={10} fill="var(--muted)">
-                  Q1: {formatValue(stats.q1)}
+                  Q1: {formatChartValue(stats.q1)}
                 </text>
                 <text x={tooltipX + 8} y={tooltipY + 64} fontSize={10} fill="var(--muted)">
-                  IQR: {formatValue(stats.iqr)}
+                  IQR: {formatChartValue(stats.iqr)}
                 </text>
                 <text x={tooltipX + 8} y={tooltipY + 80} fontSize={10} fill="var(--muted)">
-                  Mean: {formatValue(stats.mean)}
+                  Mean: {formatChartValue(stats.mean)}
                 </text>
               </g>
             );

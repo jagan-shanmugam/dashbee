@@ -15,68 +15,8 @@ import {
 } from "@/lib/export-utils";
 import { getPaletteColors } from "@/lib/color-palette";
 import { useStylePresetSafe } from "@/lib/style-preset-context";
-
-/**
- * Calculate nice round tick values
- */
-function calculateNiceTicks(
-  min: number,
-  max: number,
-  targetCount: number,
-): number[] {
-  if (max === min) return [0, max || 1];
-
-  const range = max - min;
-  const roughStep = range / (targetCount - 1);
-
-  const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
-  const residual = roughStep / magnitude;
-
-  let niceStep: number;
-  if (residual <= 1.5) niceStep = magnitude;
-  else if (residual <= 3) niceStep = 2 * magnitude;
-  else if (residual <= 7) niceStep = 5 * magnitude;
-  else niceStep = 10 * magnitude;
-
-  const niceMin = Math.floor(min / niceStep) * niceStep;
-  const niceMax = Math.ceil(max / niceStep) * niceStep;
-
-  const ticks: number[] = [];
-  for (let tick = niceMin; tick <= niceMax; tick += niceStep) {
-    ticks.push(tick);
-  }
-
-  return ticks.length >= 2 ? ticks : [0, max];
-}
-
-/**
- * Format a number for display
- */
-function formatValue(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 2,
-    notation: Math.abs(value) >= 10000 ? "compact" : "standard",
-  }).format(value);
-}
-
-/**
- * Format a label for display (truncate long labels)
- */
-function formatLabel(label: string, compact = false): string {
-  if (/^\d{4}-\d{2}-\d{2}/.test(label)) {
-    const date = new Date(label);
-    if (!isNaN(date.getTime())) {
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-    }
-  }
-  if (label.length > 12 && compact) {
-    return label.slice(0, 10) + "...";
-  }
-  return label;
-}
+import { calculateNiceTicks, formatChartValue } from "@/lib/chart-utils";
+import { formatLabel } from "@/lib/format-utils";
 
 export function StackedChart({ element, loading }: ComponentRenderProps) {
   const {
@@ -352,7 +292,7 @@ export function StackedChart({ element, loading }: ComponentRenderProps) {
                     fill="var(--muted)"
                     fontSize={10}
                   >
-                    {normalized ? `${formatValue(tick)}%` : formatValue(tick)}
+                    {normalized ? `${formatChartValue(tick)}%` : formatChartValue(tick)}
                   </text>
                 </g>
               );
@@ -408,7 +348,7 @@ export function StackedChart({ element, loading }: ComponentRenderProps) {
                         : undefined
                     }
                   >
-                    {formatLabel(categoryData.category, true)}
+                    {formatLabel(categoryData.category, { compact: true })}
                   </text>
                 </g>
               );
@@ -461,8 +401,8 @@ export function StackedChart({ element, loading }: ComponentRenderProps) {
                   </text>
                   <text x={tooltipX + 8} y={tooltipY + 36} fontSize={10} fill="var(--muted)">
                     {normalized
-                      ? `${formatValue(stack.value)}%`
-                      : formatValue(stack.value)}
+                      ? `${formatChartValue(stack.value)}%`
+                      : formatChartValue(stack.value)}
                   </text>
                 </g>
               );
@@ -572,7 +512,7 @@ export function StackedChart({ element, loading }: ComponentRenderProps) {
                     fill="var(--muted)"
                     fontSize={10}
                   >
-                    {normalized ? `${formatValue(tick)}%` : formatValue(tick)}
+                    {normalized ? `${formatChartValue(tick)}%` : formatChartValue(tick)}
                   </text>
                 </g>
               );
@@ -608,7 +548,7 @@ export function StackedChart({ element, loading }: ComponentRenderProps) {
                   fill="var(--muted)"
                   fontSize={10}
                 >
-                  {formatLabel(categoryData.category, true)}
+                  {formatLabel(categoryData.category, { compact: true })}
                 </text>
               );
             })}

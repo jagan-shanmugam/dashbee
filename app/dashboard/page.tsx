@@ -61,7 +61,7 @@ interface QueryOperation {
   sql: string;
 }
 
-type DatabaseType = "postgresql" | "mysql" | "sqlite";
+type DatabaseType = "postgresql" | "mysql" | "sqlite" | "demo";
 
 interface DBConfig {
   type: DatabaseType;
@@ -78,16 +78,17 @@ const DEFAULT_PORTS: Record<DatabaseType, number> = {
   postgresql: 5432,
   mysql: 3306,
   sqlite: 0,
+  demo: 5432,
 };
 
 const DEFAULT_DB_CONFIG: DBConfig = {
-  type: "postgresql",
-  host: "localhost",
+  type: "demo",
+  host: "supabase",
   port: 5432,
   database: "demo",
-  user: "postgres",
+  user: "demo",
   password: "",
-  ssl: false,
+  ssl: true,
 };
 
 // Logo SVG Component - Hexagon with data grid pattern (matches landing page)
@@ -707,6 +708,7 @@ function DBConfigModal({
   };
 
   const isSQLite = formData.type === "sqlite";
+  const isDemo = formData.type === "demo";
 
   const handleTest = async () => {
     setTesting(true);
@@ -811,11 +813,33 @@ function DBConfigModal({
                 color: "var(--foreground)",
               }}
             >
+              <option value="demo">Demo Database (Recommended)</option>
               <option value="postgresql">PostgreSQL</option>
               <option value="mysql">MySQL</option>
               <option value="sqlite">SQLite</option>
             </select>
           </div>
+
+          {/* Demo database info */}
+          {isDemo && (
+            <div
+              style={{
+                padding: "16px",
+                background: "rgba(59, 130, 246, 0.08)",
+                border: "1px solid rgba(59, 130, 246, 0.2)",
+                borderRadius: "var(--radius)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ fontSize: 16 }}>🎯</span>
+                <span style={{ fontWeight: 600, color: "var(--foreground)" }}>Sample E-commerce Database</span>
+              </div>
+              <p style={{ margin: 0, fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>
+                Explore DashBee with a pre-configured sample database containing orders, customers, products, and more.
+                No credentials required - just connect and start building dashboards!
+              </p>
+            </div>
+          )}
 
           {/* SQLite-specific: File Path */}
           {isSQLite && (
@@ -853,8 +877,8 @@ function DBConfigModal({
             </div>
           )}
 
-          {/* Host (not shown for SQLite) */}
-          {!isSQLite && (
+          {/* Host (not shown for SQLite or Demo) */}
+          {!isSQLite && !isDemo && (
           <div>
             <label
               htmlFor="db-host"
@@ -886,8 +910,8 @@ function DBConfigModal({
           </div>
           )}
 
-          {/* Port (not shown for SQLite) */}
-          {!isSQLite && (
+          {/* Port (not shown for SQLite or Demo) */}
+          {!isSQLite && !isDemo && (
           <div>
             <label
               htmlFor="db-port"
@@ -921,8 +945,8 @@ function DBConfigModal({
           </div>
           )}
 
-          {/* Database name (not shown for SQLite) */}
-          {!isSQLite && (
+          {/* Database name (not shown for SQLite or Demo) */}
+          {!isSQLite && !isDemo && (
           <div>
             <label
               htmlFor="db-database"
@@ -954,8 +978,8 @@ function DBConfigModal({
           </div>
           )}
 
-          {/* User (not shown for SQLite) */}
-          {!isSQLite && (
+          {/* User (not shown for SQLite or Demo) */}
+          {!isSQLite && !isDemo && (
           <div>
             <label
               htmlFor="db-user"
@@ -987,8 +1011,8 @@ function DBConfigModal({
           </div>
           )}
 
-          {/* Password (not shown for SQLite) */}
-          {!isSQLite && (
+          {/* Password (not shown for SQLite or Demo) */}
+          {!isSQLite && !isDemo && (
           <div>
             <label
               htmlFor="db-password"
@@ -1020,8 +1044,8 @@ function DBConfigModal({
           </div>
           )}
 
-          {/* SSL (not shown for SQLite) */}
-          {!isSQLite && (
+          {/* SSL (not shown for SQLite or Demo) */}
+          {!isSQLite && !isDemo && (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <input
               type="checkbox"
@@ -1382,29 +1406,37 @@ function DashboardContent() {
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem("dashb-db-config");
+    let configToUse = DEFAULT_DB_CONFIG;
+
     if (saved) {
       try {
-        const config = JSON.parse(saved);
-        setDBConfig(config);
-        // Test connection on page load for existing config
-        if (config.host && config.database && config.password) {
-          (async () => {
-            try {
-              const res = await fetch("/api/test-connection", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ dbConfig: config }),
-              });
-              setConnectionStatus(res.ok ? "verified" : "failed");
-            } catch {
-              setConnectionStatus("failed");
-            }
-          })();
-        }
+        configToUse = JSON.parse(saved);
+        setDBConfig(configToUse);
       } catch {
-        // ignore parse errors
+        // ignore parse errors, use default
       }
     }
+
+    // Auto-connect based on database type
+    const shouldAutoConnect =
+      configToUse.type === "demo" || // Demo type always auto-connects
+      (configToUse.host && configToUse.database && configToUse.password); // Other types need credentials
+
+    if (shouldAutoConnect) {
+      (async () => {
+        try {
+          const res = await fetch("/api/test-connection", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dbConfig: configToUse }),
+          });
+          setConnectionStatus(res.ok ? "verified" : "failed");
+        } catch {
+          setConnectionStatus("failed");
+        }
+      })();
+    }
+
     // Load cached questions
     const savedQuestions = localStorage.getItem("dashb-questions");
     if (savedQuestions) {
@@ -2122,61 +2154,59 @@ function DashboardContent() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
                 <Database size={24} style={{ color: sourceType === "database" ? "var(--primary)" : "var(--muted)" }} />
-                <h4 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Database</h4>
+                <h4 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>
+                  {dbConfig.type === "demo" ? "Demo Database" : "Database"}
+                </h4>
+                {dbConfig.type === "demo" && (
+                  <span style={{
+                    fontSize: 11,
+                    padding: "2px 8px",
+                    background: "rgba(59, 130, 246, 0.15)",
+                    color: "var(--primary)",
+                    borderRadius: 10,
+                    fontWeight: 500,
+                  }}>
+                    Recommended
+                  </span>
+                )}
               </div>
               <p style={{ margin: "0 0 16px", fontSize: 14, color: "var(--muted)" }}>
-                Connect to PostgreSQL database
+                {dbConfig.type === "demo"
+                  ? "Sample e-commerce database - ready to explore!"
+                  : "Connect to PostgreSQL, MySQL, or SQLite"}
               </p>
-              {dbConfig.host && dbConfig.database ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  <div style={{ fontSize: 13, color: "var(--muted)" }}>
-                    <span style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      padding: "4px 8px",
-                      background: "var(--accent)",
-                      borderRadius: 4,
-                    }}>
-                      {connectionStatus === "verified" && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--success)" }} />}
-                      {connectionStatus === "failed" && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--destructive)" }} />}
-                      {connectionStatus === "unknown" && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--warning)" }} />}
-                      {dbConfig.database}@{dbConfig.host}
-                    </span>
-                  </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setShowDBConfig(true); }}
-                    style={{
-                      padding: "8px 16px",
-                      background: connectionStatus === "verified" ? "transparent" : "var(--foreground)",
-                      color: connectionStatus === "verified" ? "var(--foreground)" : "var(--background)",
-                      border: connectionStatus === "verified" ? "1px solid var(--border)" : "none",
-                      borderRadius: "var(--radius)",
-                      fontSize: 14,
-                      fontWeight: 500,
-                      cursor: "pointer",
-                    }}
-                  >
-                    {connectionStatus === "verified" ? "Reconfigure" : connectionStatus === "failed" ? "Fix Connection" : "Connect"}
-                  </button>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ fontSize: 13, color: "var(--muted)" }}>
+                  <span style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "4px 8px",
+                    background: "var(--accent)",
+                    borderRadius: 4,
+                  }}>
+                    {connectionStatus === "verified" && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--success)" }} />}
+                    {connectionStatus === "failed" && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--destructive)" }} />}
+                    {connectionStatus === "unknown" && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--warning)" }} />}
+                    {dbConfig.type === "demo" ? "Demo Database" : `${dbConfig.database}@${dbConfig.host}`}
+                  </span>
                 </div>
-              ) : (
                 <button
                   onClick={(e) => { e.stopPropagation(); setShowDBConfig(true); }}
                   style={{
                     padding: "8px 16px",
-                    background: "var(--foreground)",
-                    color: "var(--background)",
-                    border: "none",
+                    background: connectionStatus === "verified" ? "transparent" : "var(--foreground)",
+                    color: connectionStatus === "verified" ? "var(--foreground)" : "var(--background)",
+                    border: connectionStatus === "verified" ? "1px solid var(--border)" : "none",
                     borderRadius: "var(--radius)",
                     fontSize: 14,
                     fontWeight: 500,
                     cursor: "pointer",
                   }}
                 >
-                  Configure Database
+                  {connectionStatus === "verified" ? "Change Database" : connectionStatus === "failed" ? "Fix Connection" : "Connect"}
                 </button>
-              )}
+              </div>
             </div>
 
             {/* File Upload Option */}

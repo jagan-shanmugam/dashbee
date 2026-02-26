@@ -17,7 +17,7 @@ import {
   generateSQLSuggestions,
   refineDashboardPrompt,
   generateDataInsights,
-} from "../lib/llm-tasks";
+} from "../temp/llm-tasks";
 
 // Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);

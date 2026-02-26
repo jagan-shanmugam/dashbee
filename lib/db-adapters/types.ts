@@ -3,7 +3,7 @@
  * Each adapter implements connect, query, introspect, and testConnection.
  */
 
-export type DatabaseType = "postgresql" | "mysql" | "sqlite";
+export type DatabaseType = "postgresql" | "mysql" | "sqlite" | "demo";
 
 export interface DBConfig {
   type: DatabaseType;
@@ -78,6 +78,7 @@ export const DEFAULT_PORTS: Record<DatabaseType, number> = {
   postgresql: 5432,
   mysql: 3306,
   sqlite: 0, // SQLite doesn't use a port
+  demo: 5432, // Demo uses Supabase PostgreSQL
 };
 
 /**
@@ -91,6 +92,8 @@ export function getDatabaseDisplayName(type: DatabaseType): string {
       return "MySQL";
     case "sqlite":
       return "SQLite";
+    case "demo":
+      return "Demo Database";
     default:
       return type;
   }

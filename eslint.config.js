@@ -43,6 +43,6 @@ export default [
     },
   },
   {
-    ignores: [".next/**", "node_modules/**", "test-results/**"],
+    ignores: [".next/**", "node_modules/**", "test-results/**", "temp/**"],
   },
 ];

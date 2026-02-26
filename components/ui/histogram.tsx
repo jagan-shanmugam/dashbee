@@ -15,49 +15,7 @@ import {
 } from "@/lib/export-utils";
 import { getPaletteColors } from "@/lib/color-palette";
 import { useStylePresetSafe } from "@/lib/style-preset-context";
-
-/**
- * Calculate nice round tick values
- */
-function calculateNiceTicks(
-  min: number,
-  max: number,
-  targetCount: number,
-): number[] {
-  if (max === min) return [min, min + 1];
-
-  const range = max - min;
-  const roughStep = range / (targetCount - 1);
-
-  const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
-  const residual = roughStep / magnitude;
-
-  let niceStep: number;
-  if (residual <= 1.5) niceStep = magnitude;
-  else if (residual <= 3) niceStep = 2 * magnitude;
-  else if (residual <= 7) niceStep = 5 * magnitude;
-  else niceStep = 10 * magnitude;
-
-  const niceMin = Math.floor(min / niceStep) * niceStep;
-  const niceMax = Math.ceil(max / niceStep) * niceStep;
-
-  const ticks: number[] = [];
-  for (let tick = niceMin; tick <= niceMax; tick += niceStep) {
-    ticks.push(tick);
-  }
-
-  return ticks.length >= 2 ? ticks : [min, max];
-}
-
-/**
- * Format a number for display
- */
-function formatValue(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 2,
-    notation: Math.abs(value) >= 10000 ? "compact" : "standard",
-  }).format(value);
-}
+import { calculateNiceTicks, formatChartValue } from "@/lib/chart-utils";
 
 /**
  * Calculate histogram bins
@@ -316,7 +274,7 @@ export function Histogram({ element, loading }: ComponentRenderProps) {
                   fill="var(--muted)"
                   fontSize={10}
                 >
-                  {formatValue(tick)}
+                  {formatChartValue(tick)}
                 </text>
               </g>
             );
@@ -357,7 +315,7 @@ export function Histogram({ element, loading }: ComponentRenderProps) {
             fill="var(--muted)"
             fontSize={10}
           >
-            {formatValue(xMin)}
+            {formatChartValue(xMin)}
           </text>
           <text
             x={width - padding.right}
@@ -366,7 +324,7 @@ export function Histogram({ element, loading }: ComponentRenderProps) {
             fill="var(--muted)"
             fontSize={10}
           >
-            {formatValue(xMax)}
+            {formatChartValue(xMax)}
           </text>
           <text
             x={width / 2}
@@ -420,7 +378,7 @@ export function Histogram({ element, loading }: ComponentRenderProps) {
                   fontSize={10}
                   fill="var(--muted)"
                 >
-                  {formatValue(bin.start)} - {formatValue(bin.end)}
+                  {formatChartValue(bin.start)} - {formatChartValue(bin.end)}
                 </text>
                 <text
                   x={tooltipX + tooltipWidth / 2}
@@ -450,9 +408,9 @@ export function Histogram({ element, loading }: ComponentRenderProps) {
             }}
           >
             <span>n={stats.count}</span>
-            <span>μ={formatValue(stats.mean)}</span>
-            <span>med={formatValue(stats.median)}</span>
-            <span>σ={formatValue(stats.stdDev)}</span>
+            <span>μ={formatChartValue(stats.mean)}</span>
+            <span>med={formatChartValue(stats.median)}</span>
+            <span>σ={formatChartValue(stats.stdDev)}</span>
           </div>
         )}
       </div>

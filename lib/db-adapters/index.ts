@@ -44,6 +44,24 @@ function getConfigKey(config: DBConfig): string {
  * @returns Database adapter instance
  */
 export function createAdapter(config: DBConfig): DatabaseAdapter {
+  // Handle demo type specially - uses server-side environment variable
+  if (config.type === "demo") {
+    const connectionString = process.env.SUPABASE_CONNECTION_STRING;
+    if (!connectionString) {
+      throw new Error(
+        "Demo database not configured. Set SUPABASE_CONNECTION_STRING environment variable.",
+      );
+    }
+    // Demo connections are cached under a special key
+    const demoKey = "demo:supabase";
+    let adapter = adapterCache.get(demoKey);
+    if (!adapter) {
+      adapter = createSupabaseAdapter(connectionString);
+      adapterCache.set(demoKey, adapter);
+    }
+    return adapter;
+  }
+
   const key = getConfigKey(config);
 
   // Return cached adapter if available
@@ -79,6 +97,17 @@ export function createAdapter(config: DBConfig): DatabaseAdapter {
  * @returns Database adapter instance
  */
 export function createTestAdapter(config: DBConfig): DatabaseAdapter {
+  // Handle demo type specially - uses server-side environment variable
+  if (config.type === "demo") {
+    const connectionString = process.env.SUPABASE_CONNECTION_STRING;
+    if (!connectionString) {
+      throw new Error(
+        "Demo database not configured. Set SUPABASE_CONNECTION_STRING environment variable.",
+      );
+    }
+    return createSupabaseAdapter(connectionString);
+  }
+
   switch (config.type) {
     case "postgresql":
       return createPostgresAdapter(config);
@@ -138,6 +167,9 @@ export async function isDatabaseTypeAvailable(
       } catch {
         return false;
       }
+    case "demo":
+      // Demo is available if SUPABASE_CONNECTION_STRING is set
+      return !!process.env.SUPABASE_CONNECTION_STRING;
     default:
       return false;
   }

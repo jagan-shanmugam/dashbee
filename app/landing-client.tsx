@@ -181,8 +181,8 @@ function LockIcon() {
   );
 }
 
-// Star Icon
-function StarIcon() {
+// Star Icon (unused but kept for potential future use)
+function _StarIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
@@ -487,7 +487,7 @@ const bentoStats = [
   { stat: "10x", label: "Faster dashboard creation", color: "teal" },
   { stat: "0", label: "Lines of chart code needed", color: "coral" },
   { stat: "3", label: "Database types supported", color: "purple" },
-  { stat: "2", label: "File formats supported for analytics", color: "" },
+  { stat: "2", label: "File formats supported for analytics", color: "blue" },
   { stat: "∞", label: "Questions you can ask", color: "pink", span: true },
   { stat: "100%", label: "Open source & free", color: "green" },
   { stat: "<60s", label: "Average query response", color: "yellow" },

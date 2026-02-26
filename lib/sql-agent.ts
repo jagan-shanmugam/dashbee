@@ -7,14 +7,10 @@ import {
   buildFilteredQuery,
   validateFilterMeta,
 } from "./filter-metadata";
+import { SQLToolResult } from "./types/sql-tools";
 
-export interface SQLToolResult {
-  key: string;
-  success: boolean;
-  rows?: unknown[];
-  rowCount?: number;
-  error?: string;
-}
+// Re-export for backward compatibility
+export type { SQLToolResult };
 
 /**
  * Create SQL tools for the agentic dashboard generator.

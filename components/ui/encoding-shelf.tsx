@@ -8,6 +8,7 @@ import {
   X,
   Loader2,
   BarChart3,
+  AlertCircle,
 } from "lucide-react";
 
 /**
@@ -302,19 +303,40 @@ export function EncodingShelf({
             </div>
           )}
 
-          {/* Error state */}
+          {/* Error state - elegant design */}
           {error && (
             <div
               style={{
-                padding: "12px",
-                background: "var(--destructive)",
-                borderRadius: 6,
-                color: "var(--destructive-foreground)",
+                padding: "16px",
+                background: "rgba(239, 68, 68, 0.08)",
+                border: "1px solid rgba(239, 68, 68, 0.2)",
+                borderRadius: "var(--radius)",
                 fontSize: 13,
                 marginBottom: 12,
               }}
             >
-              {error}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  color: "var(--destructive)",
+                  fontWeight: 500,
+                  marginBottom: 4,
+                }}
+              >
+                <AlertCircle size={14} />
+                Connection Issue
+              </div>
+              <p
+                style={{
+                  margin: 0,
+                  color: "var(--muted)",
+                  lineHeight: 1.5,
+                }}
+              >
+                {error}. Check your database configuration or try the demo database.
+              </p>
             </div>
           )}
 

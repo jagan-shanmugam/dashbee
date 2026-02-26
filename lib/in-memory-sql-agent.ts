@@ -1,13 +1,10 @@
 import { z } from "zod";
 import { getInMemoryDb, type TableSchema } from "./in-memory-db";
+import { SQLToolResult } from "./types/sql-tools";
 
-export interface InMemorySQLToolResult {
-  key: string;
-  success: boolean;
-  rows?: unknown[];
-  rowCount?: number;
-  error?: string;
-}
+// Re-export with both names for backward compatibility
+export type InMemorySQLToolResult = SQLToolResult;
+export type { SQLToolResult };
 
 /**
  * Generate a schema description for the LLM from in-memory tables

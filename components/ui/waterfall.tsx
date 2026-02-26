@@ -14,66 +14,7 @@ import {
   sanitizeFilename,
 } from "@/lib/export-utils";
 import { formatNumber, formatLabel as formatLabelUtil } from "@/lib/format-utils";
-
-/**
- * Calculate nice round tick values for Y-axis.
- * Handles both positive and negative values.
- */
-function calculateNiceTicks(
-  min: number,
-  max: number,
-  targetCount: number
-): number[] {
-  if (max === min) return [0, max || 1];
-
-  const range = max - min;
-  const roughStep = range / (targetCount - 1);
-
-  // Find a "nice" step value (1, 2, 5, 10, 20, 50, etc.)
-  const magnitude = Math.pow(10, Math.floor(Math.log10(Math.abs(roughStep))));
-  const residual = roughStep / magnitude;
-
-  let niceStep: number;
-  if (residual <= 1.5) niceStep = magnitude;
-  else if (residual <= 3) niceStep = 2 * magnitude;
-  else if (residual <= 7) niceStep = 5 * magnitude;
-  else niceStep = 10 * magnitude;
-
-  // Generate ticks from nice minimum to nice maximum
-  const niceMin = Math.floor(min / niceStep) * niceStep;
-  const niceMax = Math.ceil(max / niceStep) * niceStep;
-
-  const ticks: number[] = [];
-  for (let tick = niceMin; tick <= niceMax; tick += niceStep) {
-    ticks.push(tick);
-  }
-
-  // Ensure we have at least 2 ticks
-  if (ticks.length < 2) {
-    return [min, max];
-  }
-
-  return ticks;
-}
-
-/**
- * Get evenly spaced indices for x-axis labels to prevent overcrowding
- */
-function getSpacedIndices(total: number, maxLabels: number): number[] {
-  if (total <= maxLabels) {
-    return Array.from({ length: total }, (_, i) => i);
-  }
-
-  const indices: number[] = [0]; // Always show first
-  const step = (total - 1) / (maxLabels - 1);
-
-  for (let i = 1; i < maxLabels - 1; i++) {
-    indices.push(Math.round(i * step));
-  }
-
-  indices.push(total - 1); // Always show last
-  return indices;
-}
+import { calculateNiceTicks, getSpacedIndices } from "@/lib/chart-utils";
 
 /**
  * WaterfallChart - Shows cumulative effect of sequential positive/negative values

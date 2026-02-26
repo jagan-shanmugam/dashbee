@@ -541,7 +541,7 @@ async function seedDatabase() {
       const endDate = sub.cancelled_at || now;
       const monthlyInterval = isAnnual ? 12 : 1;
 
-      let invoiceDate = new Date(sub.started_at);
+      const invoiceDate = new Date(sub.started_at);
       while (invoiceDate < endDate) {
         const isPaid = Math.random() < 0.95;
         const status = isPaid

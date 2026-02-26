@@ -31,10 +31,27 @@ export interface DBConfig {
 
 /**
  * Convert legacy config to adapter config.
+ * For demo type, we pass through minimal config as the adapter handles credentials server-side.
  */
 function toAdapterConfig(config: DBConfig): AdapterDBConfig {
+  const dbType = config.type || "postgresql";
+
+  // For demo type, the adapter will use SUPABASE_CONNECTION_STRING
+  // We pass placeholder values since they won't be used
+  if (dbType === "demo") {
+    return {
+      type: "demo",
+      host: "supabase",
+      port: 5432,
+      database: "demo",
+      user: "demo",
+      password: "",
+      ssl: true,
+    };
+  }
+
   return {
-    type: config.type || "postgresql",
+    type: dbType,
     host: config.host,
     port: config.port,
     database: config.database,

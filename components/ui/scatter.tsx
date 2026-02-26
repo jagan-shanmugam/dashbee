@@ -15,53 +15,7 @@ import {
 } from "@/lib/export-utils";
 import { getPaletteColors } from "@/lib/color-palette";
 import { useStylePresetSafe } from "@/lib/style-preset-context";
-
-/**
- * Calculate nice round tick values for an axis
- */
-function calculateNiceTicks(
-  min: number,
-  max: number,
-  targetCount: number,
-): number[] {
-  if (max === min) return [min, min + 1];
-
-  const range = max - min;
-  const roughStep = range / (targetCount - 1);
-
-  const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
-  const residual = roughStep / magnitude;
-
-  let niceStep: number;
-  if (residual <= 1.5) niceStep = magnitude;
-  else if (residual <= 3) niceStep = 2 * magnitude;
-  else if (residual <= 7) niceStep = 5 * magnitude;
-  else niceStep = 10 * magnitude;
-
-  const niceMin = Math.floor(min / niceStep) * niceStep;
-  const niceMax = Math.ceil(max / niceStep) * niceStep;
-
-  const ticks: number[] = [];
-  for (let tick = niceMin; tick <= niceMax; tick += niceStep) {
-    ticks.push(tick);
-  }
-
-  if (ticks.length < 2) {
-    return [min, max];
-  }
-
-  return ticks;
-}
-
-/**
- * Format a number for display
- */
-function formatValue(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 2,
-    notation: Math.abs(value) >= 10000 ? "compact" : "standard",
-  }).format(value);
-}
+import { calculateNiceTicks, formatChartValue } from "@/lib/chart-utils";
 
 export function Scatter({ element, loading }: ComponentRenderProps) {
   const {
@@ -307,7 +261,7 @@ export function Scatter({ element, loading }: ComponentRenderProps) {
                   fill="var(--muted)"
                   fontSize={10}
                 >
-                  {formatValue(tick)}
+                  {formatChartValue(tick)}
                 </text>
               </g>
             );
@@ -333,7 +287,7 @@ export function Scatter({ element, loading }: ComponentRenderProps) {
                   fill="var(--muted)"
                   fontSize={10}
                 >
-                  {formatValue(tick)}
+                  {formatChartValue(tick)}
                 </text>
               </g>
             );
@@ -453,7 +407,7 @@ export function Scatter({ element, loading }: ComponentRenderProps) {
                   fontSize={10}
                   fill="var(--muted)"
                 >
-                  {xColumn}: {formatValue(point.x)}
+                  {xColumn}: {formatChartValue(point.x)}
                 </text>
                 <text
                   x={tooltipX + 8}
@@ -461,7 +415,7 @@ export function Scatter({ element, loading }: ComponentRenderProps) {
                   fontSize={10}
                   fill="var(--muted)"
                 >
-                  {yColumn}: {formatValue(point.y)}
+                  {yColumn}: {formatChartValue(point.y)}
                 </text>
               </g>
             );

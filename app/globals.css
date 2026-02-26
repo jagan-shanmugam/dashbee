@@ -32,6 +32,7 @@
   --pastel-pink: #fbcfe8;
   --pastel-yellow: #fef3c7;
   --pastel-green: #d1fae5;
+  --pastel-blue: #bfdbfe;
 
   /* Dark Theme (default) */
   --background: #09090b;
@@ -1192,6 +1193,7 @@ textarea:focus {
 .bento-card.pink { background: var(--pastel-pink); color: #be185d; }
 .bento-card.yellow { background: var(--pastel-yellow); color: #a16207; }
 .bento-card.green { background: var(--pastel-green); color: #15803d; }
+.bento-card.blue { background: var(--pastel-blue); color: #1d4ed8; }
 
 .bento-stat {
   font-family: var(--font-serif);
@@ -1329,6 +1331,9 @@ textarea:focus {
 .persona-chart {
   flex: 1;
   min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .persona-chart > div {
@@ -1742,6 +1747,7 @@ textarea:focus {
 .light .bento-card.pink { background: #fbcfe8; }
 .light .bento-card.yellow { background: #fef3c7; }
 .light .bento-card.green { background: #d1fae5; }
+.light .bento-card.blue { background: #bfdbfe; }
 
 /* ========================================
    LEGAL PAGES (Privacy, Terms)

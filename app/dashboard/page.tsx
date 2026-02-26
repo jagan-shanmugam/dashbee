@@ -1910,8 +1910,12 @@ function DashboardContent() {
   const isLoading = isStreaming || isExecutingQueries;
   // Only show as configured after mount to avoid hydration mismatch
   // For file mode, require fileSource to be set (file actually uploaded)
+  // For demo database, type === "demo" is sufficient (no credentials needed)
   const isConfigured =
-    mounted && ((dbConfig.password && dbConfig.host && dbConfig.database) || (sourceType === "file" && fileSource !== null));
+    mounted && (
+      (sourceType === "database" && (dbConfig.type === "demo" || (dbConfig.password && dbConfig.host && dbConfig.database))) ||
+      (sourceType === "file" && fileSource !== null)
+    );
 
   return (
     <div style={{ maxWidth: 1400, margin: "0 auto", padding: "48px 32px" }}>

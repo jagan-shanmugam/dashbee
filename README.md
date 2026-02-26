@@ -1,5 +1,6 @@
 # DashBee
 
+[![CI](https://github.com/jagan-shanmugam/dashbee/actions/workflows/ci.yml/badge.svg)](https://github.com/jagan-shanmugam/dashbee/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Last Commit](https://img.shields.io/github/last-commit/jagan-shanmugam/dashbee)](https://github.com/jagan-shanmugam/dashbee/commits/main)
 

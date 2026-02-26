@@ -96,8 +96,6 @@ lib/                    # Shared utilities
     supabase.ts         # Supabase adapter (for landing page SSG/ISR)
 
   landing-data.ts       # Landing page data fetching from Supabase
-  templates/            # Dashboard templates
-    index.ts            # Template registry
   geo-data/             # Geographic data utilities
     index.ts            # Geo data exports
     us-states.json      # US state boundaries
@@ -136,8 +134,8 @@ lib/                    # Shared utilities
   query-history.ts      # Query history tracking
   query-validator.ts    # SQL query validation
   style-presets.ts      # Dashboard styling themes
-  llm-tasks.ts          # LLM task definitions
   api-cache.ts          # API response caching
+  chart-utils.ts        # Shared chart utility functions
 
 docs/                   # Project documentation
   AZURE_SETUP.md        # Azure configuration guide
@@ -512,3 +510,53 @@ LANGFUSE_BASE_URL=https://cloud.langfuse.com  # or self-hosted URL
 
 After every implementation or code change, update the relevant documentation in the `docs/` folder to reflect new features, architectural decisions, or usage instructions. This ensures that the documentation remains accurate and helpful for current and future developers.
 Make sure to update - docs/dashb-architecture.drawio
+
+## CI/CD Pipeline
+
+### GitHub Actions
+
+The project uses GitHub Actions for continuous integration. Every push to `main` and every PR triggers:
+
+1. **Lint** - ESLint with `--max-warnings 0`
+2. **Test** - Vitest unit tests (225+ tests)
+3. **Build** - Next.js production build
+
+Workflow file: `.github/workflows/ci.yml`
+
+### Pre-commit Hooks
+
+Local pre-commit hooks run `lint-staged` to lint only staged `.ts/.tsx/.js/.jsx` files before each commit.
+
+- **husky** - Git hooks management
+- **lint-staged** - Run linters on staged files only
+
+### Deployment Verification
+
+**IMPORTANT**: After every push to the remote repository, verify that:
+
+1. **CI passes** - Check GitHub Actions status badge in README or visit:
+   `https://github.com/jagan-shanmugam/dashbee/actions`
+
+2. **All jobs succeed**:
+   - Lint ✓
+   - Unit Tests ✓
+   - Build ✓
+
+3. **If CI fails**, fix the issue before continuing with other work:
+   ```bash
+   # Check CI status
+   gh run list --limit 1
+
+   # View failed job logs
+   gh run view <run-id> --log-failed
+   ```
+
+### Pre-push Checklist
+
+Before pushing code, always run:
+
+```bash
+pnpm lint && pnpm test && pnpm build
+```
+
+This mirrors the CI pipeline and catches issues locally before they reach GitHub.

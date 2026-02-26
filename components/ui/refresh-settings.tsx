@@ -152,7 +152,7 @@ export function RefreshSettings() {
                     padding: "8px 12px",
                     background:
                       config.interval === option.value
-                        ? "var(--primary)"
+                        ? "rgba(14, 165, 233, 0.15)"
                         : "transparent",
                     color: "var(--foreground)",
                     border: "none",
@@ -179,7 +179,7 @@ export function RefreshSettings() {
                   width: "100%",
                   padding: "8px 12px",
                   background:
-                    config.interval === null ? "var(--primary)" : "transparent",
+                    config.interval === null ? "rgba(14, 165, 233, 0.15)" : "transparent",
                   color: "var(--muted)",
                   border: "none",
                   borderRadius: 4,
@@ -264,10 +264,10 @@ export function RefreshIndicator() {
         alignItems: "center",
         gap: 8,
         padding: "4px 12px",
-        background: "var(--primary)",
+        background: "rgba(14, 165, 233, 0.15)",
         borderRadius: "var(--radius)",
         fontSize: 12,
-        color: "white",
+        color: "var(--foreground)",
       }}
     >
       <span

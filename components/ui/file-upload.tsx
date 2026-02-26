@@ -367,14 +367,13 @@ export function MultiFileUpload({
         onDragLeave={handleDragLeave}
         style={{
           padding: uploadedFiles.length > 0 ? 16 : 32,
-          background: isDragging ? "var(--primary)" : "var(--card)",
-          border: `2px dashed ${isDragging ? "var(--foreground)" : error ? "var(--destructive)" : "var(--border)"}`,
+          background: isDragging ? "rgba(14, 165, 233, 0.15)" : "var(--card)",
+          border: `2px dashed ${isDragging ? "var(--primary)" : error ? "var(--destructive)" : "var(--border)"}`,
           borderRadius: "var(--radius)",
           textAlign: "center",
           cursor: disabled || isProcessing ? "not-allowed" : "pointer",
           opacity: disabled ? 0.5 : 1,
           transition: "all 0.15s ease",
-          color: isDragging ? "white" : undefined,
         }}
       >
         {isProcessing ? (
@@ -625,14 +624,13 @@ export function FileUpload({
         onDragLeave={handleDragLeave}
         style={{
           padding: 32,
-          background: isDragging ? "var(--primary)" : "var(--card)",
-          border: `2px dashed ${isDragging ? "var(--foreground)" : error ? "var(--destructive)" : "var(--border)"}`,
+          background: isDragging ? "rgba(14, 165, 233, 0.15)" : "var(--card)",
+          border: `2px dashed ${isDragging ? "var(--primary)" : error ? "var(--destructive)" : "var(--border)"}`,
           borderRadius: "var(--radius)",
           textAlign: "center",
           cursor: disabled || isProcessing ? "not-allowed" : "pointer",
           opacity: disabled ? 0.5 : 1,
           transition: "all 0.15s ease",
-          color: isDragging ? "white" : undefined,
         }}
       >
         {isProcessing ? (

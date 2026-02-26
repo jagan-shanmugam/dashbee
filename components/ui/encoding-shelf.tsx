@@ -244,9 +244,9 @@ export function EncodingShelf({
               style={{
                 fontSize: 11,
                 padding: "2px 8px",
-                background: "var(--primary)",
+                background: "rgba(14, 165, 233, 0.15)",
                 borderRadius: 10,
-                color: "white",
+                color: "var(--foreground)",
               }}
             >
               {[encoding?.xAxis, encoding?.yAxis, encoding?.color, encoding?.size]

@@ -238,7 +238,7 @@ export function CloudStorageBrowser({ onFileSelect, onClose }: CloudStorageBrows
                   style={{
                     flex: 1,
                     padding: "10px 16px",
-                    background: selectedProvider === p ? "var(--primary)" : "transparent",
+                    background: selectedProvider === p ? "rgba(14, 165, 233, 0.15)" : "transparent",
                     border: "1px solid var(--border)",
                     borderRadius: "var(--radius)",
                     fontSize: 14,
@@ -540,7 +540,7 @@ export function CloudStorageBrowser({ onFileSelect, onClose }: CloudStorageBrows
             display: "flex",
             alignItems: "center",
             gap: 8,
-            background: "var(--primary)",
+            background: "rgba(14, 165, 233, 0.1)",
           }}
         >
           {(currentBucket || currentPath) && (
@@ -695,13 +695,13 @@ export function CloudStorageBrowser({ onFileSelect, onClose }: CloudStorageBrows
           <div
             style={{
               padding: "12px 20px",
-              background: "var(--primary)",
+              background: "rgba(14, 165, 233, 0.15)",
               borderTop: "1px solid var(--border)",
               display: "flex",
               alignItems: "center",
               gap: 8,
               fontSize: 13,
-              color: "white",
+              color: "var(--foreground)",
             }}
           >
             <RefreshCw size={14} style={{ animation: "spin 1s linear infinite" }} />

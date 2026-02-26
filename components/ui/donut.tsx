@@ -329,7 +329,7 @@ export function DonutChart({ element, loading }: ComponentRenderProps) {
               padding: "2px 4px",
               marginLeft: -4,
               borderRadius: 4,
-              background: isHovered ? "var(--primary)" : "transparent",
+              background: isHovered ? "rgba(14, 165, 233, 0.15)" : "transparent",
               transition: "background 0.15s ease",
             }}
             onMouseEnter={() => setHoveredSlice(i)}

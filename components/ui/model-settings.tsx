@@ -194,7 +194,7 @@ export function ModelSettings() {
                     minWidth: 70,
                     padding: "8px 12px",
                     background:
-                      settings.provider === provider ? "var(--primary)" : "transparent",
+                      settings.provider === provider ? "rgba(14, 165, 233, 0.15)" : "transparent",
                     border: "1px solid var(--border)",
                     borderRadius: "var(--radius)",
                     fontSize: 13,
@@ -355,7 +355,7 @@ export function ModelSettings() {
                         padding: "8px 12px",
                         background:
                           settings.model === model.id
-                            ? "var(--primary)"
+                            ? "rgba(14, 165, 233, 0.15)"
                             : "transparent",
                         border: "none",
                         borderRadius: "var(--radius)",
@@ -473,7 +473,7 @@ export function ModelSettings() {
                       padding: "8px 12px",
                       background:
                         settings.model === model.id
-                          ? "var(--accent)"
+                          ? "rgba(14, 165, 233, 0.15)"
                           : "transparent",
                       border: "none",
                       borderRadius: "var(--radius)",
@@ -590,7 +590,7 @@ export function ModelSettings() {
                       padding: "8px 12px",
                       background:
                         settings.model === model.id
-                          ? "var(--accent)"
+                          ? "rgba(14, 165, 233, 0.15)"
                           : "transparent",
                       border: "none",
                       borderRadius: "var(--radius)",

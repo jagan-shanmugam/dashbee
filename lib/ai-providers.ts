@@ -57,8 +57,46 @@ function getOpenAIProvider(model: string) {
 }
 
 /**
+ * Clean API key by removing trailing whitespace and literal \n characters
+ * Some env files contain literal "\n" strings that need to be stripped
+ */
+function cleanApiKey(key: string | undefined): string | undefined {
+  if (!key) return undefined;
+  // Remove actual whitespace and literal \n at the end
+  return key.trim().replace(/\\n$/, "");
+}
+
+/**
+ * Get the default model provider with smart fallback
+ * Priority: OpenRouter (if key set) → Gemini (if key set) → AI Gateway (fallback)
+ *
+ * This prevents 403 errors when AI Gateway billing isn't configured
+ * by falling back to OpenRouter or Gemini if their API keys are available.
+ */
+function getDefaultModelProvider(modelId: string) {
+  // Check if OpenRouter is configured (clean to handle malformed env values)
+  const openRouterKey = cleanApiKey(process.env.OPENROUTER_API_KEY);
+  if (openRouterKey) {
+    // OpenRouter can handle anthropic/* and openai/* model formats
+    const provider = createOpenRouter({ apiKey: openRouterKey });
+    return provider(modelId);
+  }
+
+  // Check if Gemini is configured
+  const geminiKey = cleanApiKey(process.env.GEMINI_API_KEY);
+  if (geminiKey) {
+    // Use Gemini 2.5 Flash as reliable fallback with good tool support
+    const provider = createGoogleGenerativeAI({ apiKey: geminiKey });
+    return provider("gemini-2.5-flash");
+  }
+
+  // Fallback to AI Gateway (requires Vercel billing)
+  return modelId;
+}
+
+/**
  * Get the appropriate model provider based on the model name
- * Returns a custom OpenAI model or passes through the model string for other providers
+ * Returns a custom OpenAI model or uses smart provider selection for other models
  */
 export function getModelProvider(
   model: string,
@@ -67,8 +105,8 @@ export function getModelProvider(
     const provider = getOpenAIProvider(model);
     return provider.chat(model);
   }
-  // Fallback to the model string for other providers (e.g., AI Gateway models)
-  return model;
+  // Use smart provider selection instead of raw model string
+  return getDefaultModelProvider(model);
 }
 
 /**
@@ -114,7 +152,7 @@ export function getCustomModelProvider(
   }
 
   if (settings.provider === "openrouter") {
-    const apiKey = settings.apiKey || process.env.OPENROUTER_API_KEY;
+    const apiKey = cleanApiKey(settings.apiKey) || cleanApiKey(process.env.OPENROUTER_API_KEY);
     if (!apiKey) {
       throw new Error("OpenRouter requires an API key. Provide one in settings or set OPENROUTER_API_KEY.");
     }
@@ -124,7 +162,7 @@ export function getCustomModelProvider(
   }
 
   if (settings.provider === "gemini") {
-    const apiKey = settings.apiKey || process.env.GEMINI_API_KEY;
+    const apiKey = cleanApiKey(settings.apiKey) || cleanApiKey(process.env.GEMINI_API_KEY);
     if (!apiKey) {
       throw new Error("Gemini requires an API key. Provide one in settings or set GEMINI_API_KEY.");
     }

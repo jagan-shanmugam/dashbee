@@ -29,6 +29,8 @@ export function Card({ element, children }: ComponentRenderProps) {
         background: "var(--card)",
         border: "1px solid var(--border)",
         borderRadius: "var(--radius)",
+        overflow: "hidden",
+        width: "100%",
       }}
     >
       {(title || description) && (
@@ -57,7 +59,7 @@ export function Card({ element, children }: ComponentRenderProps) {
           )}
         </div>
       )}
-      <div style={{ padding: paddings[padding || ""] || "24px" }}>
+      <div style={{ padding: paddings[padding || ""] || "24px", overflow: "hidden" }}>
         {children}
       </div>
     </div>

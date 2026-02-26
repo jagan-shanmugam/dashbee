@@ -309,7 +309,7 @@ export function Heatmap({ element, loading }: ComponentRenderProps) {
 
   return (
     <>
-      <div>
+      <div style={{ width: "100%" }}>
         {chartHeader}
         <div ref={chartRef} style={{ position: "relative" }}>
           {renderContent()}
@@ -602,11 +602,17 @@ function MatrixHeatmap({
   const labelWidth = forFullscreen ? 150 : 110;
   // Rotated labels need significant vertical space (text extends upward when rotated -45°)
   const labelHeight = forFullscreen ? 80 : 75;
-  const width = cols.length * (cellSize + cellGap) + labelWidth;
-  const height = rows.length * (cellSize + cellGap) + labelHeight;
-  // No max constraints - let SVG scale to fit container
-  const maxNormalWidth = 800;
-  const maxNormalHeight = 550;
+  const naturalWidth = cols.length * (cellSize + cellGap) + labelWidth;
+  const naturalHeight = rows.length * (cellSize + cellGap) + labelHeight;
+
+  // Cap width to prevent infinite horizontal growth
+  const maxWidth = forFullscreen ? 1400 : 1000;
+  const maxHeight = forFullscreen ? 800 : 550;
+  const needsScroll = !forFullscreen && naturalWidth > maxWidth;
+
+  // For SVG viewBox, use natural dimensions
+  const width = naturalWidth;
+  const height = naturalHeight;
 
   const getColor = (value: number) => {
     if (value === 0) return "var(--border)";
@@ -618,14 +624,27 @@ function MatrixHeatmap({
   };
 
   return (
-    <div>
+    <div
+      style={{
+        // Add scrollable wrapper when heatmap exceeds max width
+        overflow: needsScroll ? "auto" : "hidden",
+        maxWidth: "100%",
+      }}
+    >
       <svg
         ref={svgRef}
         viewBox={`0 0 ${width} ${height}`}
         style={{
-          width: forFullscreen ? width : Math.min(width, maxNormalWidth),
-          height: forFullscreen ? height : Math.min(height, maxNormalHeight),
-          maxWidth: "100%",
+          // When scrolling is needed, use natural width; otherwise constrain
+          width: forFullscreen
+            ? naturalWidth
+            : needsScroll
+              ? naturalWidth
+              : Math.min(naturalWidth, maxWidth),
+          height: forFullscreen
+            ? naturalHeight
+            : Math.min(naturalHeight, maxHeight),
+          maxWidth: needsScroll ? "none" : "100%",
           display: "block",
         }}
       >

@@ -14,21 +14,26 @@ export function Grid({ element, children }: ComponentRenderProps) {
     gap?: string | null;
   };
 
-  // Generous spacing scale for better visual hierarchy
+  // Generous spacing scale for better visual hierarchy in dashboards
   const gaps: Record<string, string> = {
     none: "0",
-    sm: "12px",
-    md: "24px",   // Increased from 16px for better breathing room
-    lg: "32px",   // Increased from 24px
-    xl: "48px",   // New: extra large for major sections
+    xs: "8px",    // Extra small for tight groupings
+    sm: "16px",   // Comfortable small spacing
+    md: "24px",   // Default: generous breathing room
+    lg: "36px",   // Large sections
+    xl: "48px",   // Extra large for major sections
   };
 
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: `repeat(${columns || 2}, 1fr)`,
+        // minmax(0, 1fr) allows grid children to shrink below their content size,
+        // preventing overflow when children have intrinsic width (like charts/tables)
+        gridTemplateColumns: `repeat(${columns || 2}, minmax(0, 1fr))`,
         gap: gaps[gap || "md"],
+        overflow: "hidden",
+        width: "100%",
       }}
     >
       {children}

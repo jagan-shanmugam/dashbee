@@ -2830,6 +2830,9 @@ function DashboardContent() {
           background: "var(--card)",
           border: "1px solid var(--border)",
           borderRadius: "var(--radius)",
+          // Overflow protection: prevent AI-generated content from causing horizontal scroll
+          overflow: "hidden",
+          maxWidth: "100%",
           ...stylePresetCSS,
         }}
       >

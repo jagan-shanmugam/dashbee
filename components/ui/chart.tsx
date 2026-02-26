@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useMemo } from "react";
+import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import {
   Download,
   Image,
@@ -37,6 +37,38 @@ import {
   getSpacedIndices,
   formatChartValue,
 } from "@/lib/chart-utils";
+
+/**
+ * Hook to observe container width using ResizeObserver.
+ * Returns the current width of the container element.
+ * Falls back to a default width if the ref is not attached.
+ */
+function useContainerWidth(
+  ref: React.RefObject<HTMLElement | null>,
+  defaultWidth = 400
+): number {
+  const [width, setWidth] = useState(defaultWidth);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    // Initial measurement
+    setWidth(element.clientWidth || defaultWidth);
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        setWidth(entry.contentRect.width || defaultWidth);
+      }
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, defaultWidth]);
+
+  return width;
+}
 
 /**
  * Format a label for display in charts.
@@ -317,6 +349,8 @@ export function Chart({ element, loading }: ComponentRenderProps) {
 
   const chartRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  // Container-aware sizing: observe container width for responsive charts
+  const containerWidth = useContainerWidth(chartRef, 400);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [overrideType, setOverrideType] = useState<
     "bar" | "line" | "area" | null
@@ -726,8 +760,9 @@ export function Chart({ element, loading }: ComponentRenderProps) {
 
       // Vertical bar chart (default)
       if (orientation === "vertical") {
-        const width = forFullscreen ? 800 : 400;
-        const height = forFullscreen ? 350 : 220;
+        // Use container-aware width with reasonable max bounds
+        const width = forFullscreen ? 800 : Math.max(300, Math.min(containerWidth, 600));
+        const height = Math.round(width * (forFullscreen ? 0.44 : 0.55));
         const padding = { top: 20, right: 20, bottom: 60, left: 55 };
         const chartWidth = width - padding.left - padding.right;
         const chartHeight = height - padding.top - padding.bottom;
@@ -755,7 +790,7 @@ export function Chart({ element, loading }: ComponentRenderProps) {
               viewBox={`0 0 ${width} ${height}`}
               style={{
                 width: "100%",
-                height: forFullscreen ? 350 : 220,
+                height: height,
                 display: "block",
               }}
             >
@@ -910,9 +945,9 @@ export function Chart({ element, loading }: ComponentRenderProps) {
 
     // Line/Area chart - improved with smooth curves, grid, and tooltips
     if (effectiveType === "line" || effectiveType === "area") {
-      // Use proper pixel coordinates for better rendering
-      const width = forFullscreen ? 800 : 400;
-      const height = forFullscreen ? 400 : 200;
+      // Use container-aware width with reasonable max bounds
+      const width = forFullscreen ? 800 : Math.max(300, Math.min(containerWidth, 600));
+      const height = Math.round(width * (forFullscreen ? 0.5 : 0.5));
       const padding = { top: 20, right: 20, bottom: 40, left: 55 };
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
@@ -953,7 +988,7 @@ export function Chart({ element, loading }: ComponentRenderProps) {
             viewBox={`0 0 ${width} ${height}`}
             style={{
               width: "100%",
-              height: forFullscreen ? 400 : 200,
+              height: height,
               display: "block",
             }}
           >

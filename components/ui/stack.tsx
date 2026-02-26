@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { type ComponentRenderProps } from "@json-render/react";
 
 /**
@@ -15,14 +16,16 @@ export function Stack({ element, children }: ComponentRenderProps) {
     align?: string | null;
   };
 
-  // Generous spacing scale for better visual rhythm
+  const isHorizontal = direction === "horizontal";
+
+  // Generous spacing scale for better visual rhythm in dashboards
   const gaps: Record<string, string> = {
     none: "0",
-    xs: "8px",      // New: extra small for tight groupings
-    sm: "12px",     // Increased from 8px
-    md: "20px",     // Increased from 16px
-    lg: "32px",     // Increased from 24px
-    xl: "48px",     // New: extra large for sections
+    xs: "8px",      // Extra small for tight groupings
+    sm: "16px",     // Comfortable small spacing
+    md: "24px",     // Default: generous breathing room
+    lg: "36px",     // Large sections
+    xl: "48px",     // Extra large for major sections
   };
 
   const alignments: Record<string, string> = {
@@ -32,16 +35,33 @@ export function Stack({ element, children }: ComponentRenderProps) {
     stretch: "stretch",
   };
 
+  // Wrap children to enable proper flex shrinking
+  // minWidth: 0 allows flex children to shrink below their content size
+  const wrappedChildren = React.Children.map(children, (child) => (
+    <div
+      style={{
+        minWidth: 0,
+        // For horizontal stacks, allow equal distribution; for vertical, stretch
+        flex: isHorizontal ? "1 1 0" : undefined,
+      }}
+    >
+      {child}
+    </div>
+  ));
+
   return (
     <div
       style={{
         display: "flex",
-        flexDirection: direction === "horizontal" ? "row" : "column",
+        flexDirection: isHorizontal ? "row" : "column",
         gap: gaps[gap || "md"],
         alignItems: alignments[align || "stretch"],
+        overflow: "hidden",
+        minWidth: 0,
+        width: "100%",
       }}
     >
-      {children}
+      {wrappedChildren}
     </div>
   );
 }

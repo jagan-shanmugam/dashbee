@@ -23,7 +23,8 @@
     "docker:up:mysql": "cd sample-db && docker compose up -d mysql",
     "docker:down": "cd sample-db && docker compose down",
     "db:seed-sqlite": "tsx scripts/seed-sqlite.ts",
-    "db:seed-mysql": "tsx scripts/seed-mysql.ts"
+    "db:seed-mysql": "tsx scripts/seed-mysql.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.13",
@@ -76,7 +77,9 @@
     "eslint-config-next": "^16.1.6",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
     "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.54.0",

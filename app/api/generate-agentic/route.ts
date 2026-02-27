@@ -1,10 +1,11 @@
 import { streamText, stepCountIs } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { componentList } from "@/lib/catalog";
 import { createSQLTools } from "@/lib/sql-agent";
 import { createInMemorySQLTools, inMemorySchemaToPrompt } from "@/lib/in-memory-sql-agent";
 import { getInMemoryDb } from "@/lib/in-memory-db";
 import { introspectSchema, schemaToPrompt } from "@/lib/schema-introspector";
-import { getModelProvider, getCustomModelProvider, type CustomModelSettings } from "@/lib/ai-providers";
+import { getCustomModelProvider, type CustomModelSettings } from "@/lib/ai-providers";
 import { DBConfig } from "@/lib/db";
 import { apiCache } from "@/lib/api-cache";
 
@@ -441,8 +442,21 @@ export async function POST(req: Request) {
     if (modelSettings && modelSettings.model) {
       model = getCustomModelProvider(modelSettings);
     } else {
-      const modelId = process.env.AI_GATEWAY_MODEL || DEFAULT_MODEL;
-      model = getModelProvider(modelId);
+      // Use Gemini directly - getModelProvider has issues in Vercel serverless context
+      const geminiKey = process.env.GEMINI_API_KEY;
+      const openRouterKey = process.env.OPENROUTER_API_KEY;
+
+      if (geminiKey && geminiKey.startsWith("AIza")) {
+        const provider = createGoogleGenerativeAI({ apiKey: geminiKey });
+        model = provider("gemini-2.5-flash");
+      } else if (openRouterKey && openRouterKey.startsWith("sk-or-")) {
+        const { createOpenRouter } = await import("@openrouter/ai-sdk-provider");
+        const provider = createOpenRouter({ apiKey: openRouterKey });
+        model = provider(process.env.AI_GATEWAY_MODEL || DEFAULT_MODEL);
+      } else {
+        // Fallback to AI Gateway (requires Vercel billing)
+        model = process.env.AI_GATEWAY_MODEL || DEFAULT_MODEL;
+      }
     }
 
     const result = streamText({

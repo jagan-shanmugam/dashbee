@@ -57,59 +57,23 @@ function getOpenAIProvider(model: string) {
 }
 
 /**
- * Clean API key by removing trailing whitespace and literal \n characters
- * Some env files contain literal "\n" strings that need to be stripped
- */
-function cleanApiKey(key: string | undefined): string | undefined {
-  if (!key) return undefined;
-  // Remove actual whitespace and literal \n at the end
-  return key.trim().replace(/\\n$/, "");
-}
-
-/**
- * Validate API key format for known providers
- * Returns undefined if the key is malformed (treated as "not configured")
- */
-function validateOpenRouterKey(key: string | undefined): string | undefined {
-  if (!key) return undefined;
-  // OpenRouter keys must start with "sk-or-"
-  if (!key.startsWith("sk-or-")) {
-    console.warn("OpenRouter API key has invalid format (expected sk-or-...), skipping");
-    return undefined;
-  }
-  return key;
-}
-
-function validateGeminiKey(key: string | undefined): string | undefined {
-  if (!key) return undefined;
-  // Gemini keys typically start with "AIza"
-  if (!key.startsWith("AIza")) {
-    console.warn("Gemini API key has invalid format (expected AIza...), skipping");
-    return undefined;
-  }
-  return key;
-}
-
-/**
  * Get the default model provider with smart fallback
- * Priority: OpenRouter (if valid key) → Gemini (if valid key) → AI Gateway (fallback)
+ * Priority: OpenRouter → Gemini → AI Gateway (fallback)
  *
- * This prevents 403 errors when AI Gateway billing isn't configured
- * by falling back to OpenRouter or Gemini if their API keys are available.
+ * Note: For serverless environments like Vercel, prefer using direct
+ * provider creation in route handlers for better reliability.
  */
 function getDefaultModelProvider(modelId: string) {
-  // Check if OpenRouter is configured with a valid key format
-  const openRouterKey = validateOpenRouterKey(cleanApiKey(process.env.OPENROUTER_API_KEY));
-  if (openRouterKey) {
-    // OpenRouter can handle anthropic/* and openai/* model formats
+  // Check if OpenRouter is configured
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
+  if (openRouterKey && openRouterKey.startsWith("sk-or-")) {
     const provider = createOpenRouter({ apiKey: openRouterKey });
     return provider(modelId);
   }
 
-  // Check if Gemini is configured with a valid key format
-  const geminiKey = validateGeminiKey(cleanApiKey(process.env.GEMINI_API_KEY));
-  if (geminiKey) {
-    // Use Gemini 2.5 Flash as reliable fallback with good tool support
+  // Check if Gemini is configured
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (geminiKey && geminiKey.startsWith("AIza")) {
     const provider = createGoogleGenerativeAI({ apiKey: geminiKey });
     return provider("gemini-2.5-flash");
   }

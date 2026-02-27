@@ -2,6 +2,13 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
+/**
+ * Clean API key by removing whitespace and newlines
+ */
+function cleanApiKey(key: string | undefined): string | undefined {
+  return key?.trim();
+}
+
 const CUSTOM_OPENAI_MODELS = [
   "gpt-4o",
   "gpt-4o-mini",

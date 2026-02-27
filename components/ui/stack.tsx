@@ -42,7 +42,7 @@ export function Stack({ element, children }: ComponentRenderProps) {
       style={{
         minWidth: 0,
         // For horizontal stacks, allow equal distribution; for vertical, stretch
-        flex: isHorizontal ? "1 1 0" : undefined,
+        flex: isHorizontal ? "1 1 auto" : undefined,
       }}
     >
       {child}

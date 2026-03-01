@@ -503,19 +503,68 @@ function useSQLDashboardStream(
               }
 
               case "finish": {
-                // Done event
-                setAgentStatus({
-                  message: "Dashboard ready!",
-                  type: "success",
-                });
+                // Check if the stream finished due to an error
+                const finishData = event as {
+                  finishReason?: string;
+                  rawFinishReason?: string;
+                };
+
+                if (finishData.finishReason === "error") {
+                  const errorMsg =
+                    finishData.rawFinishReason || "Generation failed";
+                  setError(new Error(errorMsg));
+                  setAgentStatus({
+                    message: `Error: ${errorMsg}`,
+                    type: "error",
+                  });
+                } else {
+                  setAgentStatus({
+                    message: "Dashboard ready!",
+                    type: "success",
+                  });
+                }
+                break;
+              }
+
+              case "finish-step": {
+                // Check if a step finished due to an error (e.g., MALFORMED_FUNCTION_CALL)
+                const stepData = event as {
+                  finishReason?: string;
+                  rawFinishReason?: string;
+                };
+
+                if (stepData.finishReason === "error") {
+                  const errorMsg = stepData.rawFinishReason || "Step failed";
+                  setError(new Error(errorMsg));
+                  setAgentStatus({
+                    message: `Error: ${errorMsg}`,
+                    type: "error",
+                  });
+                }
                 break;
               }
 
               case "error": {
-                // Error event
-                const errorData = event as { message?: string };
+                // Error event from stream - extract details from nested structure
+                const errorData = event as {
+                  error?: { name?: string; message?: string };
+                  message?: string;
+                };
+
+                // Extract error info from nested structure or top-level
+                const errorName = errorData.error?.name;
+                const errorMsg =
+                  errorData.error?.message ||
+                  errorData.message ||
+                  "Unknown error";
+
+                // Create error object with proper name for UI display
+                const err = new Error(errorMsg);
+                if (errorName) err.name = errorName;
+
+                setError(err);
                 setAgentStatus({
-                  message: `Error: ${errorData.message || "Unknown error"}`,
+                  message: `Error: ${errorMsg}`,
                   type: "error",
                 });
                 break;

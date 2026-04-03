@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashbee
+  namespace: dashbee
+  labels:
+    app: dashbee
+spec:
+  type: LoadBalancer
+  selector:
+    app: dashbee
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 3000
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800  # 3 hours

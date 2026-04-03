@@ -3,12 +3,12 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import {
-  DataProvider,
+  StateProvider,
   VisibilityProvider,
   ActionProvider,
   Renderer,
 } from "@json-render/react";
-import type { UITree, UIElement } from "@json-render/core";
+import type { Spec, UIElement } from "@json-render/core";
 import { componentRegistry } from "@/components/ui";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { LandingPageData } from "@/lib/landing-data";
@@ -494,7 +494,7 @@ const bentoStats = [
 ];
 
 /**
- * Helper to build a flat UITree from nested structure
+ * Helper to build a flat Spec from nested structure
  */
 function buildUITree(
   node: {
@@ -507,7 +507,7 @@ function buildUITree(
     }>;
   },
   keyPrefix = "el"
-): UITree {
+): Spec {
   const elements: Record<string, UIElement> = {};
   let keyCounter = 0;
 
@@ -517,7 +517,6 @@ function buildUITree(
       props: Record<string, unknown>;
       children?: unknown[];
     },
-    parentKey: string | null = null
   ): string {
     const key = `${keyPrefix}_${keyCounter++}`;
     const childKeys: string[] = [];
@@ -527,7 +526,6 @@ function buildUITree(
         if (typeof child === "object" && child !== null && "type" in child) {
           const childKey = addElement(
             child as { type: string; props: Record<string, unknown>; children?: unknown[] },
-            key
           );
           childKeys.push(childKey);
         }
@@ -535,11 +533,9 @@ function buildUITree(
     }
 
     elements[key] = {
-      key,
       type: node.type,
       props: node.props,
       children: childKeys.length > 0 ? childKeys : undefined,
-      parentKey,
     };
 
     return key;
@@ -786,7 +782,7 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
     ],
   };
 
-  // Convert to flat UITree structure
+  // Convert to flat Spec structure
   const uiTree = buildUITree(treeDefinition);
 
   const currentPersona = personas.find((p) => p.id === activePersona) || personas[0];
@@ -958,13 +954,13 @@ export function LandingPageClient({ data }: LandingPageClientProps) {
           </div>
 
           <div className="demo-content">
-            <DataProvider initialData={initialData}>
+            <StateProvider initialState={initialData}>
               <VisibilityProvider>
                 <ActionProvider handlers={{}}>
-                  <Renderer tree={uiTree} registry={componentRegistry} />
+                  <Renderer spec={uiTree} registry={componentRegistry} />
                 </ActionProvider>
               </VisibilityProvider>
-            </DataProvider>
+            </StateProvider>
           </div>
         </div>
       </section>

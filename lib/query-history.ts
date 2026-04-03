@@ -6,10 +6,10 @@
  * and optionally full dashboard state for restoration.
  */
 
-import type { UITree } from "@json-render/core";
+import type { Spec } from "@json-render/core";
 
-// Re-export UITree type for callers
-export type { UITree };
+// Re-export Spec type for callers
+export type { Spec };
 
 const STORAGE_KEY = "dashb-query-history";
 const MAX_HISTORY_ITEMS = 50;
@@ -48,7 +48,7 @@ export interface HistoryEntry {
   success: boolean;
   dbName: string;
   // New fields for full dashboard restoration
-  tree?: UITree | null;
+  tree?: Spec | null;
   queries?: SQLQuery[];
   filters?: FilterDefinition[];
   filterValues?: Record<string, FilterValue>;
@@ -97,7 +97,7 @@ function saveHistory(history: HistoryEntry[]): void {
  * Dashboard state to save with history entry
  */
 export interface DashboardState {
-  tree: UITree | null;
+  tree: Spec | null;
   queries: SQLQuery[];
   filters: FilterDefinition[];
   filterValues: Record<string, FilterValue>;

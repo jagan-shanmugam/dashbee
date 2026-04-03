@@ -1,13 +1,13 @@
 "use client";
 
 import { type ComponentRenderProps } from "@json-render/react";
-import { useData } from "@json-render/react";
+import { useStateStore } from "@json-render/react";
 import { getByPath } from "@json-render/core";
 
 function useResolvedValue<T>(
   value: T | { path: string } | null | undefined,
 ): T | undefined {
-  const { data } = useData();
+  const { state: data } = useStateStore();
   if (value === null || value === undefined) return undefined;
   if (typeof value === "object" && "path" in value) {
     return getByPath(data, value.path) as T | undefined;

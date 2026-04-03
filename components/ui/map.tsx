@@ -3,7 +3,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { type ComponentRenderProps } from "@json-render/react";
-import { useData } from "@json-render/react";
+import { useStateStore } from "@json-render/react";
 import { getByPath } from "@json-render/core";
 import { ChartActions } from "./chart-actions";
 import { FullscreenModal } from "./fullscreen-modal";
@@ -319,7 +319,7 @@ export function MapChart({ element, loading }: ComponentRenderProps) {
   } | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
 
-  const { data } = useData();
+  const { state: data } = useStateStore();
   const drillDown = useDrillDownOptional();
   const queryData = getByPath(data, `/queries/${queryKey}`) as
     | Array<Record<string, unknown>>

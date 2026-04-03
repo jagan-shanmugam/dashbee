@@ -231,13 +231,15 @@ UI DESIGN RULES:
 3. Chart and Table have their own title prop - don't add extra Headings for them either
 
 OUTPUT FORMAT (ONLY after all execute_sql calls succeed):
-Output JSONL where each line is a patch:
-{"op":"set","path":"/root","value":"main-card"}
+Output JSONL where each line is a JSON Patch (RFC 6902):
+{"op":"replace","path":"/root","value":"main-card"}
 {"op":"add","path":"/elements/main-card","value":{...}}
 
-ELEMENT STRUCTURE:
+Valid ops: "add", "remove", "replace" (NO "set" op - it is not valid).
+Use "replace" for /root, "add" for new /elements/<key> entries.
+
+ELEMENT STRUCTURE (the key is in the path, NOT inside the element):
 {
-  "key": "unique-key",
   "type": "ComponentType",
   "props": { ... },
   "children": ["child-key-1", "child-key-2"]
@@ -323,12 +325,14 @@ WORKFLOW:
 5. ONLY output UI patches after ALL queries succeed
 
 OUTPUT FORMAT (after queries succeed):
-{"op":"set","path":"/root","value":"main-card"}
+{"op":"replace","path":"/root","value":"main-card"}
 {"op":"add","path":"/elements/main-card","value":{...}}
 
-ELEMENT STRUCTURE:
+Valid ops: "add", "remove", "replace" (NO "set" op - it is not valid).
+Use "replace" for /root, "add" for new /elements/<key> entries.
+
+ELEMENT STRUCTURE (the key is in the path, NOT inside the element):
 {
-  "key": "unique-key",
   "type": "ComponentType",
   "props": { ... },
   "children": ["child-key-1", "child-key-2"]
@@ -442,7 +446,7 @@ export async function POST(req: Request) {
     if (modelSettings && modelSettings.model) {
       model = getCustomModelProvider(modelSettings);
     } else {
-      // Use Gemini directly - getModelProvider has issues in Vercel serverless context
+      // Provider priority: Gemini → OpenRouter → AI Gateway fallback
       const geminiKey = process.env.GEMINI_API_KEY;
       const openRouterKey = process.env.OPENROUTER_API_KEY;
 

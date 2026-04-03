@@ -1,0 +1,139 @@
+{
+  "name": "DashBee",
+  "description": "AI-powered dashboard generator that creates dashboards from natural language prompts",
+  "repository": "https://github.com/jagan-shanmugam/dashbee",
+  "logo": "https://dashb-brown.vercel.app/og-image.png",
+  "keywords": [
+    "analytics",
+    "dashboards",
+    "ai",
+    "business-intelligence",
+    "data-visualization",
+    "nextjs",
+    "postgresql"
+  ],
+  "website": "https://dashb-brown.vercel.app/",
+  "success_url": "/dashboard",
+
+  "addons": [
+    {
+      "plan": "heroku-postgresql:essential-0",
+      "as": "DATABASE"
+    }
+  ],
+
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production",
+      "required": true
+    },
+
+    "OPENAI_API_KEY": {
+      "description": "OpenAI API key for AI-powered dashboard generation. Get one at https://platform.openai.com/api-keys",
+      "required": true
+    },
+
+    "OPENAI_BASE_URL": {
+      "description": "Optional: Azure OpenAI endpoint URL (e.g., https://your-resource.openai.azure.com)",
+      "required": false
+    },
+
+    "OPENROUTER_API_KEY": {
+      "description": "Optional: OpenRouter API key as an alternative to OpenAI. Get one at https://openrouter.ai/keys",
+      "required": false
+    },
+
+    "GEMINI_API_KEY": {
+      "description": "Optional: Google Gemini API key. Get one at https://ai.google.dev/",
+      "required": false
+    },
+
+    "NEXTAUTH_SECRET": {
+      "description": "Secret for session encryption (generate with: openssl rand -base64 32)",
+      "generator": "secret",
+      "required": true
+    },
+
+    "DATABASE_SSL": {
+      "description": "Enable SSL for database connections",
+      "value": "true",
+      "required": false
+    },
+
+    "ALLOWED_SCHEMAS": {
+      "description": "Comma-separated list of allowed database schemas",
+      "value": "public",
+      "required": false
+    },
+
+    "MAX_QUERY_ROWS": {
+      "description": "Maximum number of rows returned per query",
+      "value": "1000",
+      "required": false
+    },
+
+    "QUERY_TIMEOUT_MS": {
+      "description": "Query timeout in milliseconds",
+      "value": "5000",
+      "required": false
+    },
+
+    "LANGFUSE_SECRET_KEY": {
+      "description": "Optional: Langfuse secret key for LLM observability",
+      "required": false
+    },
+
+    "LANGFUSE_PUBLIC_KEY": {
+      "description": "Optional: Langfuse public key for LLM observability",
+      "required": false
+    },
+
+    "LANGFUSE_BASE_URL": {
+      "description": "Optional: Langfuse instance URL",
+      "value": "https://cloud.langfuse.com",
+      "required": false
+    },
+
+    "AWS_ACCESS_KEY_ID": {
+      "description": "Optional: AWS access key for S3 cloud storage integration",
+      "required": false
+    },
+
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "Optional: AWS secret access key for S3",
+      "required": false
+    },
+
+    "AWS_REGION": {
+      "description": "Optional: AWS region for S3",
+      "value": "us-east-1",
+      "required": false
+    },
+
+    "GCS_PROJECT_ID": {
+      "description": "Optional: Google Cloud Storage project ID",
+      "required": false
+    },
+
+    "GCS_KEY_FILE": {
+      "description": "Optional: Google Cloud Storage service account key (base64-encoded JSON)",
+      "required": false
+    }
+  },
+
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+
+  "stack": "heroku-24"
+}

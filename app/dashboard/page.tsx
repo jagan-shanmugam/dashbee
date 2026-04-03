@@ -3,15 +3,15 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
-  DataProvider,
+  StateProvider,
   ActionProvider,
   VisibilityProvider,
   Renderer,
-  useData,
+  useStateStore,
 } from "@json-render/react";
 import { AlertCircle, Loader2, X, Download, Upload, Database, ArrowLeftRight, Cloud } from "lucide-react";
-import type { UITree, UIElement, JsonPatch } from "@json-render/core";
-import { setByPath } from "@json-render/core";
+import type { Spec } from "@json-render/core";
+import { createSpecStreamCompiler } from "@json-render/core";
 import { componentRegistry } from "@/components/ui";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -53,12 +53,6 @@ interface SQLQuery {
   key: string;
   sql: string;
   executedSql?: string; // SQL with filter params filled in
-}
-
-interface QueryOperation {
-  op: "query";
-  key: string;
-  sql: string;
 }
 
 type DatabaseType = "postgresql" | "mysql" | "sqlite" | "demo";
@@ -113,79 +107,8 @@ function LogoIcon() {
   );
 }
 
-/**
- * Parse a single JSON line from the stream
- */
-function parseStreamLine(line: string): QueryOperation | JsonPatch | null {
-  try {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("//")) {
-      return null;
-    }
-    return JSON.parse(trimmed);
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Apply a JSON patch to the current tree
- */
-function applyPatch(tree: UITree, patch: JsonPatch): UITree {
-  const newTree = { ...tree, elements: { ...tree.elements } };
-
-  switch (patch.op) {
-    case "set":
-    case "add":
-    case "replace": {
-      if (patch.path === "/root") {
-        newTree.root = patch.value as string;
-        return newTree;
-      }
-
-      if (patch.path.startsWith("/elements/")) {
-        const pathParts = patch.path.slice("/elements/".length).split("/");
-        const elementKey = pathParts[0];
-
-        if (!elementKey) return newTree;
-
-        if (pathParts.length === 1) {
-          newTree.elements[elementKey] = patch.value as UIElement;
-        } else {
-          const element = newTree.elements[elementKey];
-          if (element && typeof element === "object") {
-            const propPath = "/" + pathParts.slice(1).join("/");
-            const newElement = { ...element };
-            try {
-              setByPath(
-                newElement as Record<string, unknown>,
-                propPath,
-                patch.value,
-              );
-              newTree.elements[elementKey] = newElement;
-            } catch (err) {
-              console.warn("Failed to apply patch:", propPath, err);
-            }
-          }
-        }
-      }
-      break;
-    }
-    case "remove": {
-      if (patch.path.startsWith("/elements/")) {
-        const elementKey = patch.path.slice("/elements/".length).split("/")[0];
-        if (elementKey && elementKey in newTree.elements) {
-           
-          const { [elementKey]: _, ...rest } = newTree.elements;
-          newTree.elements = rest;
-        }
-      }
-      break;
-    }
-  }
-
-  return newTree;
-}
+// parseStreamLine and applyPatch have been replaced by createSpecStreamCompiler
+// from @json-render/core, which handles JSONL parsing and patch application internally.
 
 interface Progress {
   queriesFound: number;
@@ -262,7 +185,7 @@ function useSQLDashboardStream(
   modelSettings?: ModelSettingsForApi | null,
   getEnabledComponents?: () => string[],
 ) {
-  const [tree, setTree] = useState<UITree | null>(null);
+  const [tree, setTree] = useState<Spec | null>(null);
   const [queries, setQueries] = useState<SQLQuery[]>([]);
   const [queryResults, setQueryResults] = useState<Record<string, unknown[]>>(
     {},
@@ -287,7 +210,7 @@ function useSQLDashboardStream(
 
   // Restore state from a saved history entry
   const restoreState = useCallback(
-    (savedTree: UITree | null, savedQueries: SQLQuery[]) => {
+    (savedTree: Spec | null, savedQueries: SQLQuery[]) => {
       setTree(savedTree);
       setQueries(savedQueries);
       setQueryResults({});
@@ -321,13 +244,14 @@ function useSQLDashboardStream(
       setProgress(INITIAL_PROGRESS);
       setAgentStatus({ message: "Starting agent...", type: "working" });
 
-      let currentTree: UITree = { root: "", elements: {} };
-      setTree(currentTree);
+      const emptySpec: Spec = { root: "", elements: {} };
+      const compiler = createSpecStreamCompiler<Spec>();
+      compiler.reset(emptySpec);
+      setTree(emptySpec);
 
       const collectedQueries: SQLQuery[] = [];
       const collectedResults: Record<string, unknown[]> = {};
       let patchCount = 0;
-      let textBuffer = "";
 
       // Use override file data if provided (bypasses race condition), otherwise use hook params
       const effectiveFileData = options?.fileDataOverride ?? fileData;
@@ -468,36 +392,21 @@ function useSQLDashboardStream(
               }
 
               case "text-delta": {
-                // Text content - accumulate and process
+                // Text content - feed to SpecStream compiler for JSONL parsing + patch application
                 const text = event.text || "";
-                textBuffer += text;
+                const { result, newPatches } = compiler.push(text);
 
-                // Try to parse JSONL patches from the text buffer
-                const jsonlLines = textBuffer.split("\n");
-                textBuffer = jsonlLines.pop() ?? "";
-
-                for (const jsonlLine of jsonlLines) {
-                  const patchParsed = parseStreamLine(jsonlLine);
-                  if (
-                    patchParsed &&
-                    "op" in patchParsed &&
-                    "path" in patchParsed
-                  ) {
-                    currentTree = applyPatch(
-                      currentTree,
-                      patchParsed as JsonPatch,
-                    );
-                    setTree({ ...currentTree });
-                    patchCount++;
-                    setProgress((prev) => ({
-                      ...prev,
-                      uiPatchesApplied: patchCount,
-                    }));
-                    setAgentStatus({
-                      message: "Building dashboard UI...",
-                      type: "working",
-                    });
-                  }
+                if (newPatches.length > 0) {
+                  setTree(result);
+                  patchCount += newPatches.length;
+                  setProgress((prev) => ({
+                    ...prev,
+                    uiPatchesApplied: patchCount,
+                  }));
+                  setAgentStatus({
+                    message: "Building dashboard UI...",
+                    type: "working",
+                  });
                 }
                 break;
               }
@@ -573,21 +482,15 @@ function useSQLDashboardStream(
           }
         }
 
-        // Process remaining text buffer for JSONL
-        if (textBuffer.trim()) {
-          const jsonlLines = textBuffer.split("\n");
-          for (const jsonlLine of jsonlLines) {
-            const patchParsed = parseStreamLine(jsonlLine);
-            if (patchParsed && "op" in patchParsed && "path" in patchParsed) {
-              currentTree = applyPatch(currentTree, patchParsed as JsonPatch);
-              setTree({ ...currentTree });
-              patchCount++;
-              setProgress((prev) => ({
-                ...prev,
-                uiPatchesApplied: patchCount,
-              }));
-            }
-          }
+        // Flush any remaining content in the compiler's internal buffer
+        const { result: finalResult, newPatches: finalPatches } = compiler.push("\n");
+        if (finalPatches.length > 0) {
+          setTree(finalResult);
+          patchCount += finalPatches.length;
+          setProgress((prev) => ({
+            ...prev,
+            uiPatchesApplied: patchCount,
+          }));
         }
 
         setIsStreaming(false);
@@ -1244,7 +1147,7 @@ function DashboardContent() {
   const [activePrompt, setActivePrompt] = useState<string | null>(null);
 
   const dashboardRef = useRef<HTMLDivElement>(null);
-  const { update } = useData();
+  const { update } = useStateStore();
   const { onRefresh, setEnabled: setRefreshEnabled } = useRefresh();
   const { sourceType, setSourceType, loadFileData, removeFile, clearFileData, fileSource, fileSources, getFileDataForApi, getAllFilesDataForApi } = useDataSource();
   const {
@@ -1525,7 +1428,7 @@ function DashboardContent() {
     }
   }, []);
 
-  // Sync query results to DataProvider
+  // Sync query results to StateProvider
   useEffect(() => {
     update({ queries: queryResults });
   }, [queryResults, update]);
@@ -2959,7 +2862,7 @@ function DashboardContent() {
             }}
           >
             <Renderer
-              tree={filteredTree}
+              spec={filteredTree}
               registry={componentRegistry}
               loading={isLoading}
             />
@@ -2996,7 +2899,7 @@ function DashboardContent() {
 
 export default function DashboardPage() {
   return (
-    <DataProvider>
+    <StateProvider>
       <VisibilityProvider>
         <ActionProvider handlers={ACTION_HANDLERS}>
           <FilterProvider>
@@ -3027,6 +2930,6 @@ export default function DashboardPage() {
           </FilterProvider>
         </ActionProvider>
       </VisibilityProvider>
-    </DataProvider>
+    </StateProvider>
   );
 }

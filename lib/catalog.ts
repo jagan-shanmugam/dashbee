@@ -1,4 +1,5 @@
-import { createCatalog } from "@json-render/core";
+import { defineCatalog } from "@json-render/core";
+import { schema } from "@json-render/react/schema";
 import { z } from "zod";
 
 /**
@@ -10,8 +11,7 @@ import { z } from "zod";
  * Note: OpenAI structured output requires all fields to be required.
  * Use .nullable() instead of .optional() for optional fields.
  */
-export const sqlDashboardCatalog = createCatalog({
-  name: "DashBee",
+export const sqlDashboardCatalog = defineCatalog(schema, {
   components: {
     // Layout Components
     Card: {
@@ -20,7 +20,7 @@ export const sqlDashboardCatalog = createCatalog({
         description: z.string().nullable(),
         padding: z.enum(["sm", "md", "lg"]).nullable(),
       }),
-      hasChildren: true,
+      slots: ["default"],
       description: "A card container with optional title",
     },
 
@@ -29,7 +29,7 @@ export const sqlDashboardCatalog = createCatalog({
         columns: z.number().min(1).max(4).nullable(),
         gap: z.enum(["sm", "md", "lg"]).nullable(),
       }),
-      hasChildren: true,
+      slots: ["default"],
       description: "Grid layout with configurable columns",
     },
 
@@ -39,7 +39,7 @@ export const sqlDashboardCatalog = createCatalog({
         gap: z.enum(["sm", "md", "lg"]).nullable(),
         align: z.enum(["start", "center", "end", "stretch"]).nullable(),
       }),
-      hasChildren: true,
+      slots: ["default"],
       description: "Flex stack for horizontal or vertical layouts",
     },
 
@@ -396,7 +396,6 @@ export const sqlDashboardCatalog = createCatalog({
     refresh_data: { description: "Refresh all SQL queries and data" },
     export_csv: { description: "Export current data to CSV" },
   },
-  validation: "strict",
 });
 
 // Export the component list for the AI prompt

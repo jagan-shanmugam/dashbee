@@ -1,7 +1,7 @@
 "use client";
 
 import { type ComponentRenderProps } from "@json-render/react";
-import { useData } from "@json-render/react";
+import { useStateStore } from "@json-render/react";
 import { getByPath } from "@json-render/core";
 
 export function Metric({ element, loading }: ComponentRenderProps) {
@@ -12,7 +12,7 @@ export function Metric({ element, loading }: ComponentRenderProps) {
     format?: string | null;
   };
 
-  const { data } = useData();
+  const { state: data } = useStateStore();
   const queryData = getByPath(data, `/queries/${queryKey}`);
 
   let rawValue: unknown;

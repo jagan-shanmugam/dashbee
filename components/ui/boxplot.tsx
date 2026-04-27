@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { type ComponentRenderProps } from "@json-render/react";
-import { useData } from "@json-render/react";
+import { useStateStore } from "@json-render/react";
 import { getByPath } from "@json-render/core";
 import { ChartActions } from "./chart-actions";
 import { FullscreenModal } from "./fullscreen-modal";
@@ -109,7 +109,7 @@ export function Boxplot({ element, loading }: ComponentRenderProps) {
     }
   }, [colorPalette, stylePreset?.preset?.colorPaletteId, stylePreset?.preset]);
 
-  const { data } = useData();
+  const { state: data } = useStateStore();
   const queryData = getByPath(data, `/queries/${queryKey}`) as
     | Array<Record<string, unknown>>
     | undefined;

@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback } from "react";
 import { type ComponentRenderProps } from "@json-render/react";
-import { useData } from "@json-render/react";
+import { useStateStore } from "@json-render/react";
 import { getByPath } from "@json-render/core";
 import { ChartActions } from "./chart-actions";
 import { FullscreenModal } from "./fullscreen-modal";
@@ -69,7 +69,7 @@ export function BulletChart({ element, loading }: ComponentRenderProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const { data } = useData();
+  const { state: data } = useStateStore();
   const queryData = getByPath(data, `/queries/${queryKey}`) as
     | Array<Record<string, unknown>>
     | undefined;

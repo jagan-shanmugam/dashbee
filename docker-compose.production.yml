@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  app:
+    image: jagansh/dashbee:latest
+    container_name: dashbee-app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://dashbee:${DB_PASSWORD:-changeme}@postgres:5432/dashbee
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+
+      # Optional: Alternative AI providers
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+
+      # Optional: Langfuse observability
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_BASE_URL: ${LANGFUSE_BASE_URL:-https://cloud.langfuse.com}
+
+      # Optional: Cloud storage
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      GCS_PROJECT_ID: ${GCS_PROJECT_ID:-}
+      GCS_KEY_FILE: ${GCS_KEY_FILE:-}
+
+      # Database configuration
+      DATABASE_SSL: "false"
+      ALLOWED_SCHEMAS: public
+      MAX_QUERY_ROWS: 1000
+      QUERY_TIMEOUT_MS: 5000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - dashbee
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: dashbee-postgres
+    environment:
+      POSTGRES_DB: dashbee
+      POSTGRES_USER: dashbee
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dashbee"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dashbee
+    # Uncomment to expose PostgreSQL port (for external access)
+    # ports:
+    #   - "5432:5432"
+
+  # Optional: Redis for caching (future enhancement)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: dashbee-redis
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis-data:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 5
+  #   networks:
+  #     - dashbee
+
+volumes:
+  postgres-data:
+    driver: local
+  # redis-data:
+  #   driver: local
+
+networks:
+  dashbee:
+    driver: bridge

@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashbee
+  namespace: dashbee
+  annotations:
+    # cert-manager annotations for automatic TLS
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+    # Nginx ingress annotations (adjust based on your ingress controller)
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+
+    # Rate limiting
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - dashbee.example.com
+    secretName: dashbee-tls
+  rules:
+  - host: dashbee.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dashbee
+            port:
+              number: 80

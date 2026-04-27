@@ -1,0 +1,186 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashbee
+  namespace: dashbee
+  labels:
+    app: dashbee
+    version: v1
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: dashbee
+  template:
+    metadata:
+      labels:
+        app: dashbee
+        version: v1
+    spec:
+      # Init container to wait for database
+      initContainers:
+      - name: wait-for-postgres
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          until nc -z postgres-service 5432; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 2
+          done
+          echo "PostgreSQL is ready!"
+
+      containers:
+      - name: dashbee
+        image: jagansh/dashbee:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+
+        env:
+        - name: NODE_ENV
+          value: "production"
+
+        # Database configuration from secrets
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: dashbee-secrets
+              key: database-url
+
+        - name: DATABASE_SSL
+          value: "true"
+
+        # AI provider from secrets
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dashbee-secrets
+              key: openai-api-key
+
+        # Security
+        - name: NEXTAUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: dashbee-secrets
+              key: nextauth-secret
+
+        # Non-sensitive configuration from ConfigMap
+        - name: ALLOWED_SCHEMAS
+          valueFrom:
+            configMapKeyRef:
+              name: dashbee-config
+              key: allowed_schemas
+
+        - name: MAX_QUERY_ROWS
+          valueFrom:
+            configMapKeyRef:
+              name: dashbee-config
+              key: max_query_rows
+
+        - name: QUERY_TIMEOUT_MS
+          valueFrom:
+            configMapKeyRef:
+              name: dashbee-config
+              key: query_timeout_ms
+
+        # Optional: Langfuse (uncomment if using)
+        # - name: LANGFUSE_SECRET_KEY
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: dashbee-secrets
+        #       key: langfuse-secret-key
+        #       optional: true
+        # - name: LANGFUSE_PUBLIC_KEY
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: dashbee-secrets
+        #       key: langfuse-public-key
+        #       optional: true
+        # - name: LANGFUSE_BASE_URL
+        #   value: "https://cloud.langfuse.com"
+
+        # Resource limits
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+
+        # Liveness probe - restart if unhealthy
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+
+        # Readiness probe - remove from service if not ready
+        readinessProbe:
+          httpGet:
+            path: /api/ready
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 2
+          failureThreshold: 3
+
+        # Startup probe - for slow startup
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 30  # 150 seconds max startup time
+
+        # Graceful shutdown
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - sleep 15
+
+      # Graceful termination period
+      terminationGracePeriodSeconds: 30
+
+      # Security context
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+
+      # Pod affinity (spread across nodes)
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - dashbee
+              topologyKey: kubernetes.io/hostname

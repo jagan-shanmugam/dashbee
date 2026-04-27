@@ -40,7 +40,7 @@ Using useEffect is often not necessary and can be avoided.
 - **React**: 19.2.3
 - **TypeScript**: Strict mode enabled
 - **AI**: Vercel AI SDK v6 (`ai` package) with tool use pattern
-- **AI Providers**: OpenAI (`@ai-sdk/openai`), AI Gateway (`@ai-sdk/gateway`), OpenRouter (`@openrouter/ai-sdk-provider`), Gemini (`@ai-sdk/google`)
+- **AI Providers**: OpenAI (`@ai-sdk/openai`), AI Gateway (`@ai-sdk/gateway`), OpenRouter (`@openrouter/ai-sdk-provider`), Gemini (`@ai-sdk/google`), Ollama (local models via OpenAI-compatible API)
 - **UI Rendering**: @json-render/react + @json-render/core for dynamic component rendering
 - **Database**: Multi-database support
   - PostgreSQL (`pg`)
@@ -78,10 +78,16 @@ app/                    # Next.js App Router
       connect/          # Test and list buckets
       download/         # Download files from buckets
       list/             # List bucket contents
+    newsletter/
+      subscribe/        # Newsletter subscription endpoint
   page.tsx              # Landing page (ISR with Supabase data)
   landing-client.tsx    # Landing page client component
   dashboard/
     page.tsx            # Main dashboard application (AI generator)
+  privacy/
+    page.tsx            # Privacy policy page
+  terms/
+    page.tsx            # Terms of service page
   layout.tsx            # Root layout
 
 components/
@@ -119,8 +125,11 @@ lib/                    # Shared utilities
   column-annotations-context.tsx # Column metadata
   chart-catalog-context.tsx   # Chart type catalog
 
+  types/
+    sql-tools.ts        # SQL tool type definitions
+
   # Core utilities
-  ai-providers.ts       # AI model configuration (OpenAI/Azure/OpenRouter/Gemini)
+  ai-providers.ts       # AI model configuration (OpenAI/Azure/OpenRouter/Gemini/Ollama)
   sql-agent.ts          # SQL tool definitions for LLM
   db.ts                 # Legacy database connection
   schema-introspector.ts# DB schema analysis
@@ -141,18 +150,34 @@ lib/                    # Shared utilities
   api-cache.ts          # API response caching
   chart-utils.ts        # Shared chart utility functions
 
-docs/                   # Project documentation
+docs/                   # Project documentation (21 files)
   AZURE_SETUP.md        # Azure configuration guide
+  BUGS.md               # Known bugs and issues
   BUSINESS_QUESTIONS.md # Sample business questions
-  CACHING*.md           # Caching architecture docs
+  CACHING.md            # Caching implementation details
+  CACHING_ARCHITECTURE.md # Caching architecture overview
+  CACHING_SUMMARY.md    # Caching strategy summary
+  charting-libraries-research.md # Comprehensive charting library research (March 2026)
+  charting-libraries-summary.md  # Executive summary with recommendations
+  chart-adapter-architecture.md  # Hybrid multi-format chart rendering design
+  DATA_FORMULATOR_RESEARCH.md # Data Formulator research notes
+  LANGFUSE_INTEGRATION.md # LLM observability documentation
   ROADMAP.md            # Feature roadmap
   SAMPLE_QUERIES.md     # Example SQL queries
   SELF_HOSTING.md       # Docker deployment guide
+  TODO.md               # Pending tasks and ideas
+  aws-agentcore-vs-langfuse-comparison.md # Observability comparison
+  og-design-philosophy.md # OG image design philosophy
+  plotivy-hands-on-research.md # Plotivy hands-on research
+  plotivy-reverse-engineering.md # Plotivy reverse engineering
+  plotivy-security-audit.md # Plotivy security audit
+  supabase-testing-plan.md # Supabase testing plan
 
 scripts/                # Utility scripts
   seed-sqlite.ts        # Seed SQLite demo database
   seed-mysql.ts         # Seed MySQL demo database
   test-llm.ts           # LLM integration tests
+  test-providers.ts     # AI provider integration tests
 
 sample-db/              # Docker database setup
   docker-compose.yml    # PostgreSQL + MySQL containers
@@ -493,7 +518,7 @@ LANGFUSE_BASE_URL=https://cloud.langfuse.com  # or self-hosted URL
 - `app/landing-client.tsx` - Landing page client component
 - `app/dashboard/page.tsx` - Main dashboard UI with streaming logic
 - `lib/sql-agent.ts` - SQL tool definitions
-- `lib/ai-providers.ts` - Model provider configuration (OpenAI/Azure/OpenRouter/Gemini)
+- `lib/ai-providers.ts` - Model provider configuration (OpenAI/Azure/OpenRouter/Gemini/Ollama)
 - `lib/landing-data.ts` - Landing page data fetching functions
 - `lib/db-adapters/index.ts` - Database adapter factory
 - `lib/db-adapters/types.ts` - Adapter interface definitions
@@ -509,11 +534,18 @@ LANGFUSE_BASE_URL=https://cloud.langfuse.com  # or self-hosted URL
 - `docker-compose.external-db.yml` - App-only deployment for external databases
 - `app/api/health/route.ts` - Health check endpoint for container orchestration
 - `docs/SELF_HOSTING.md` - Self-hosting and Docker deployment guide
+- `lib/types/sql-tools.ts` - SQL tool type definitions
+- `lib/chart-utils.ts` - Shared chart utility functions
+- `app/api/newsletter/subscribe/route.ts` - Newsletter subscription endpoint
 
 ## Docs
 
 After every implementation or code change, update the relevant documentation in the `docs/` folder to reflect new features, architectural decisions, or usage instructions. This ensures that the documentation remains accurate and helpful for current and future developers.
 Make sure to update - docs/dashb-architecture.drawio
+
+## Plan Storage
+
+All implementation plans created by Claude Code must be stored under `.claude/plans/` in the project root. This ensures plans are preserved for later review and audit. Never delete plan files — they serve as a historical record of design decisions.
 
 ## CI/CD Pipeline
 

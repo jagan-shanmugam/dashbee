@@ -8,7 +8,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { type ComponentRenderProps } from "@json-render/react";
-import { useData } from "@json-render/react";
+import { useStateStore } from "@json-render/react";
 import { getByPath } from "@json-render/core";
 import { ChartActions } from "./chart-actions";
 import { FullscreenModal } from "./fullscreen-modal";
@@ -373,7 +373,7 @@ export function Chart({ element, loading }: ComponentRenderProps) {
   const effectiveLabelColumn = overrideLabelColumn || labelColumn;
   const effectiveValueColumn = overrideValueColumn || valueColumn;
 
-  const { data } = useData();
+  const { state: data } = useStateStore();
   const drillDown = useDrillDownOptional();
   const stylePreset = useStylePresetSafe();
   const queryData = getByPath(data, `/queries/${queryKey}`) as

@@ -1,0 +1,128 @@
+---
+# PostgreSQL StatefulSet for DashBee
+# Note: For production, use a managed database (AWS RDS, GCP Cloud SQL, etc.)
+# This is suitable for testing and small deployments only.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: dashbee
+  labels:
+    app: postgres
+spec:
+  type: ClusterIP
+  ports:
+  - name: postgres
+    port: 5432
+    targetPort: 5432
+    protocol: TCP
+  selector:
+    app: postgres
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: dashbee
+  labels:
+    app: postgres
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  # storageClassName: default  # Adjust based on your cluster
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: dashbee
+  labels:
+    app: postgres
+spec:
+  serviceName: postgres-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16-alpine
+        ports:
+        - name: postgres
+          containerPort: 5432
+          protocol: TCP
+
+        env:
+        - name: POSTGRES_DB
+          value: dashbee
+        - name: POSTGRES_USER
+          value: dashbee
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: password
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - dashbee
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - dashbee
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+
+---
+# PostgreSQL password secret
+# Create with: kubectl create secret generic postgres-secrets --from-literal=password='YOUR_SECURE_PASSWORD' -n dashbee
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secrets
+  namespace: dashbee
+type: Opaque
+stringData:
+  password: "changeme"  # CHANGE THIS!
